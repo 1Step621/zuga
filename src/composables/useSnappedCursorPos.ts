@@ -1,9 +1,9 @@
 import { gridStore } from "~/stores/gridStore";
 import { useCursorPos } from "./useCursorPos";
-import { Pos } from "~/utilities/pos";
 import { cameraStore } from "~/stores/cameraStore";
 import { useWindowSize } from "./useWindowSize";
 import { screenToWorld } from "~/utilities/coordinate";
+import { toWorldPos } from "~/utilities/pos";
 
 export const useSnappedCursorPos = () => {
   const cursorPos = useCursorPos();
@@ -14,10 +14,10 @@ export const useSnappedCursorPos = () => {
   const snappedCursorPos = () => {
     const worldPos = screenToWorld(cursorPos(), camera, windowSize());
 
-    return {
+    return toWorldPos({
       x: Math.round(worldPos.x / grid.width) * grid.width,
       y: Math.round(worldPos.y / grid.height) * grid.height,
-    } as Pos
+    })
   };
 
   return snappedCursorPos;

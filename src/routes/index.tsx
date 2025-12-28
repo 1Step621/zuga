@@ -13,6 +13,7 @@ import { Content } from "~/utilities/content";
 import { cameraStore } from "~/stores/cameraStore";
 import { svg } from "~/utilities/svgs";
 import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
+import { toScreenPos, toWorldPos } from "~/utilities/pos";
 
 export default function Home() {
   const [grid, _setGrid] = gridStore;
@@ -25,7 +26,7 @@ export default function Home() {
     return worldToScreen(snappedCursorPos(), camera, windowSize());
   });
   const backgroundPosition = createMemo(() => {
-    const worldOriginScreen = worldToScreen({ x: 0, y: 0 }, camera, windowSize());
+    const worldOriginScreen = worldToScreen(toWorldPos({ x: 0, y: 0 }), camera, windowSize());
     const backgroundSizeX = grid.width * camera.scale;
     const backgroundSizeY = grid.height * camera.scale;
 
@@ -77,7 +78,7 @@ export default function Home() {
   const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     const factor = 1 - e.deltaY * 0.001;
-    const center = { x: e.clientX, y: e.clientY };
+    const center = toScreenPos({ x: e.clientX, y: e.clientY });
 
     const newScale = camera.scale * factor;
     if (newScale < 0.1 || 10 < newScale) {
@@ -94,10 +95,10 @@ export default function Home() {
     const dy = worldPosBeforeZoom.y - worldPosAfterZoom.y;
 
     setCamera(c => ({
-      center: {
+      center: toWorldPos({
         x: c.center.x + dx,
         y: c.center.y + dy,
-      }
+      })
     }));
   };
 

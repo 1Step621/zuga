@@ -1,11 +1,11 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { Pos } from "~/utilities/pos";
+import { toScreenPos } from "~/utilities/pos";
 
 export const useCursorPos = () => {
-  const [pos, setPos] = createSignal({ x: 0, y: 0 } as Pos);
+  const [pos, setPos] = createSignal(toScreenPos({ x: 0, y: 0 }));
 
   const updatePos = (x: number, y: number) => {
-    setPos({ x, y });
+    setPos(toScreenPos({ x, y }));
   };
 
   onMount(() => {
