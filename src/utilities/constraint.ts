@@ -3,14 +3,14 @@ type AtLeastOne<T, Keys extends keyof T = keyof T> =
   ? Required<Pick<T, Keys>> & Partial<Omit<T, Keys>>
   : never;
 
-export type NumberConstraint = AtLeastOne<{
+export type Constraint = AtLeastOne<{
   min?: number;
   max?: number;
 }> | {
   exact: number;
 };
 
-export const checkNumberConstraint = (constraint: NumberConstraint, value: number): boolean => {
+export const checkConstraint = (constraint: Constraint, value: number): boolean => {
   if ('exact' in constraint) {
     return value === constraint.exact;
   }

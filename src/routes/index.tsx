@@ -7,7 +7,7 @@ import { requiredPoints } from "~/utilities/meta";
 import { contentStore } from "~/stores/contentStore";
 import { drawingStateStore } from "~/stores/drawingStateStore";
 import { gridStore } from "~/stores/gridStore";
-import { checkNumberConstraint } from "~/utilities/numberConstraint";
+import { checkConstraint } from "~/utilities/constraint";
 import { defaultOtherProp, Kind, shapeProp } from "~/utilities/props";
 import { Content } from "~/utilities/content";
 import { cameraStore } from "~/stores/cameraStore";
@@ -57,8 +57,8 @@ export default function Home() {
     }
 
     if (
-      checkNumberConstraint(requiredPoints[kind], drawingState.points.length) &&
-      (!checkNumberConstraint(requiredPoints[kind], drawingState.points.length + 1) || isDoubleClick())
+      checkConstraint(requiredPoints[kind], drawingState.points.length) &&
+      (!checkConstraint(requiredPoints[kind], drawingState.points.length + 1) || isDoubleClick())
     ) {
       setContent({
         content: [...content.content, {
@@ -122,7 +122,7 @@ export default function Home() {
           on:wheel={handleWheel}
         >
           {content.content.map(item => svg(item.kind, item.shapeProps, item.otherProps))}
-          {checkNumberConstraint(requiredPoints[drawingState.kind], drawingState.points.length + 1) &&
+          {checkConstraint(requiredPoints[drawingState.kind], drawingState.points.length + 1) &&
             svg(
               drawingState.kind,
               shapeProp(drawingState.kind, [...drawingState.points, snappedCursorPos()]),
