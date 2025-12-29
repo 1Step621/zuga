@@ -1,11 +1,22 @@
 @import "tailwindcss";
 
-@layer theme {
-  :root {
-    --font-sans: "Inter Variable", "Noto Sans CJK JP", "Noto Sans JP",
-      "Noto Sans", sans-serif;
-    --font-serif: "Times New Roman", "Noto Serif CJK JP", "Noto Serif JP",
-      "Noto Serif" serif;
-    --font-mono: "Roboto Mono", "Consolas", "Inconsolata", monospace;
-  }
+@theme {
+  --font-sans: "Inter Variable", "Noto Sans CJK JP", "Noto Sans JP", "Noto Sans",
+    sans-serif;
+  --font-serif: "Times New Roman", "Noto Serif CJK JP", "Noto Serif JP",
+    "Noto Serif" serif;
+  --font-mono: "Roboto Mono", "Consolas", "Inconsolata", monospace;
+}
+
+@utility bg-grid {
+  background-image: linear-gradient(
+      to right,
+      transparent calc(100% - 1px),
+      currentColor calc(100% - 1px)
+    ),
+    linear-gradient(
+      to bottom,
+      transparent calc(100% - 1px),
+      currentColor calc(100% - 1px)
+    );
 }

@@ -8,51 +8,72 @@ import { contentStore } from "~/stores/contentStore";
 import { handStore } from "~/stores/handStore";
 import { gridStore } from "~/stores/gridStore";
 import { checkConstraint } from "~/utilities/constraint";
-import { defaultOtherProp, Kind, shapeProp } from "~/utilities/props";
+import { defaultOtherProp, shapeProp } from "~/utilities/props";
 import { Content } from "~/utilities/content";
 import { cameraStore } from "~/stores/cameraStore";
-import { svg } from "~/utilities/svgs";
+import { Svg } from "~/utilities/svgs";
 import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
 import { toScreenPos, toWorldPos } from "~/utilities/pos";
+import { isColliding } from "~/utilities/collision";
+import { useCursorPos } from "~/composables/useCursorPos";
 
 export default function Home() {
   const [grid] = gridStore;
   const [hand, setHand] = handStore;
   const [content, setContent] = contentStore;
   const [camera, setCamera] = cameraStore;
+  const cursorPos = useCursorPos();
   const windowSize = useWindowSize();
+
+  const [lastClickTime, setLastClickTime] = createSignal(0);
+
   const snappedCursorPos = useSnappedCursorPos();
-  const snappedCursorScreenPos = createMemo(() => {
-    return worldToScreen(snappedCursorPos(), camera, windowSize());
-  });
-  const backgroundPosition = createMemo(() => {
+  const snappedCursorScreenPos = createMemo(() =>
+    worldToScreen(snappedCursorPos(), camera, windowSize())
+  );
+  const scaledGridSize = createMemo(() => ({
+    width: grid.width * camera.scale,
+    height: grid.height * camera.scale,
+  }));
+  const gridPosition = createMemo(() => {
     const worldOriginScreen = worldToScreen(
       toWorldPos({ x: 0, y: 0 }),
       camera,
       windowSize()
     );
-    const backgroundSizeX = grid.width * camera.scale;
-    const backgroundSizeY = grid.height * camera.scale;
-
     return {
       x:
-        ((worldOriginScreen.x % backgroundSizeX) + backgroundSizeX) %
-        backgroundSizeX,
+        ((worldOriginScreen.x % scaledGridSize().width) +
+          scaledGridSize().width) %
+        scaledGridSize().width,
       y:
-        ((worldOriginScreen.y % backgroundSizeY) + backgroundSizeY) %
-        backgroundSizeY,
+        ((worldOriginScreen.y % scaledGridSize().height) +
+          scaledGridSize().height) %
+        scaledGridSize().height,
     };
   });
 
-  const doubleClickThreshold = 300;
-  const [lastClickTime, setLastClickTime] = createSignal(0);
-  const isDoubleClick = () =>
-    performance.now() - lastClickTime() < doubleClickThreshold;
+  const finishCurrentShape = () => {
+    if (hand.mode !== "draw") return;
+    setContent({
+      content: [
+        ...content.content,
+        {
+          uuid: crypto.randomUUID(),
+          kind: hand.kind,
+          shapeProps: shapeProp(hand.kind, hand.points),
+          otherProps: defaultOtherProp(hand.kind),
+        } as Content,
+      ],
+    });
+    setHand({ points: [] });
+  };
 
-  const handleClick = (e: MouseEvent) => {
-    const kind: Kind = hand.kind;
+  const addPoint = (e: MouseEvent) => {
+    if (hand.mode !== "draw") return;
+    const isDoubleClick = performance.now() - lastClickTime() < 300;
 
-    if (!isDoubleClick()) {
+    if (!isDoubleClick) {
       const newPoints = [...hand.points, snappedCursorPos()];
       if (
         hand.points.at(-1)?.x === snappedCursorPos().x &&
@@ -65,27 +86,94 @@ export default function Home() {
         points: newPoints,
       });
     }
-
     if (
-      checkConstraint(requiredPoints[kind], hand.points.length) &&
-      (!checkConstraint(requiredPoints[kind], hand.points.length + 1) ||
-        isDoubleClick())
+      checkConstraint(requiredPoints[hand.kind], hand.points.length) &&
+      (!checkConstraint(requiredPoints[hand.kind], hand.points.length + 1) ||
+        isDoubleClick)
     ) {
-      setContent({
-        content: [
-          ...content.content,
-          {
-            uuid: crypto.randomUUID(),
-            kind,
-            shapeProps: shapeProp(kind, hand.points),
-            otherProps: defaultOtherProp(kind),
-          } as Content,
-        ],
-      });
-      setHand({ points: [] });
+      finishCurrentShape();
     }
 
     setLastClickTime(performance.now());
+    return;
+  };
+
+  const cancel = (e: MouseEvent) => {
+    if (hand.mode !== "draw") return;
+    setHand({ points: [] });
+  };
+
+  const pan = (e: MouseEvent) => {
+    e.preventDefault();
+    const startPos = { x: e.clientX, y: e.clientY };
+    const startCenter = { ...camera.center };
+
+    const handleMouseMove = (ev: MouseEvent) => {
+      const dx = (startPos.x - ev.clientX) / camera.scale;
+      const dy = (startPos.y - ev.clientY) / camera.scale;
+      setCamera({
+        center: toWorldPos({
+          x: startCenter.x + dx,
+          y: startCenter.y + dy,
+        }),
+      });
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const select = (e: MouseEvent) => {
+    if (hand.mode !== "select") return;
+    const collisions = content.content.filter((item) =>
+      isColliding(item.kind, item.shapeProps, item.otherProps, cursorPos())
+    );
+    setHand({
+      selecteds: collisions.map((item) => item.uuid),
+    });
+  };
+
+  const handleMousedown = (e: MouseEvent) => {
+    if (hand.mode === "select") {
+      switch (e.button) {
+        case 0:
+          select(e);
+          return;
+        case 1:
+          pan(e);
+          return;
+      }
+    } else if (hand.mode === "draw") {
+      switch (e.button) {
+        case 0:
+          addPoint(e);
+          return;
+        case 1:
+          pan(e);
+          return;
+        case 2:
+          cancel(e);
+          return;
+      }
+    }
+  };
+
+  const handleMouseup = () => {
+    if (hand.mode !== "draw") return;
+    if (
+      checkConstraint(requiredPoints[hand.kind], hand.points.length + 1) &&
+      performance.now() - lastClickTime() > 300
+    ) {
+      setHand({
+        points: [...hand.points, snappedCursorPos()],
+      });
+      finishCurrentShape();
+    }
   };
 
   const handleWheel = (e: WheelEvent) => {
@@ -120,58 +208,75 @@ export default function Home() {
       <Title>Zuga</Title>
       <Sidebar />
       <main
-        class="w-full h-screen"
+        class="w-full h-screen text-gray-100 bg-grid"
         style={{
-          "background-image": `
-          linear-gradient(0deg, transparent ${
-            grid.height * camera.scale - 1
-          }px, var(--color-gray-100) ${grid.height * camera.scale - 1}px),
-          linear-gradient(90deg,  transparent ${
-            grid.width * camera.scale - 1
-          }px, var(--color-gray-100) ${grid.width * camera.scale - 1}px)`,
-          "background-size": `${grid.width * camera.scale}px ${
-            grid.height * camera.scale
+          "background-size": `${scaledGridSize().width}px ${
+            scaledGridSize().height
           }px`,
-          "background-position-x": `${backgroundPosition().x}px`,
-          "background-position-y": `${backgroundPosition().y}px`,
+          "background-position-x": `${gridPosition().x}px`,
+          "background-position-y": `${gridPosition().y}px`,
         }}
       >
         <svg
+          class="cursor-crosshair select-none"
           xmlns="http://www.w3.org/2000/svg"
           width="100%"
           height="100%"
-          viewBox={`${
-            camera.center.x - windowSize().width / 2 / camera.scale
-          } ${camera.center.y - windowSize().height / 2 / camera.scale} ${
-            windowSize().width / camera.scale
-          } ${windowSize().height / camera.scale}`}
-          on:click={handleClick}
-          on:wheel={handleWheel}
+          viewBox={[
+            camera.center.x - windowSize().width / 2 / camera.scale,
+            camera.center.y - windowSize().height / 2 / camera.scale,
+            windowSize().width / camera.scale,
+            windowSize().height / camera.scale,
+          ].join(" ")}
+          onMouseDown={handleMousedown}
+          onMouseUp={handleMouseup}
+          onWheel={handleWheel}
+          onContextMenu={(e) => e.preventDefault()}
         >
           <For each={content.content}>
-            {(item) => svg(item.kind, item.shapeProps, item.otherProps)}
+            {(item) => (
+              <Svg
+                kind={item.kind}
+                shape={item.shapeProps}
+                other={item.otherProps}
+                selected={
+                  hand.mode === "select" && hand.selecteds.includes(item.uuid)
+                }
+              />
+            )}
           </For>
           <Show
-            when={checkConstraint(
-              requiredPoints[hand.kind],
-              hand.points.length + 1
-            )}
+            when={
+              hand.mode === "draw" &&
+              checkConstraint(
+                requiredPoints[hand.kind],
+                hand.points.length + 1
+              ) &&
+              hand
+            }
           >
-            {svg(
-              hand.kind,
-              shapeProp(hand.kind, [...hand.points, snappedCursorPos()]),
-              defaultOtherProp(hand.kind)
+            {(hand) => (
+              <Svg
+                kind={hand().kind}
+                shape={shapeProp(hand().kind, [
+                  ...hand().points,
+                  snappedCursorPos(),
+                ])}
+                other={defaultOtherProp(hand().kind)}
+              />
             )}
           </Show>
         </svg>
       </main>
-      <div
-        class="absolute w-4 h-4 rounded-full bg-cyan-800 opacity-20 pointer-events-none"
-        style={{
-          top: snappedCursorScreenPos().y - 8 + "px",
-          left: snappedCursorScreenPos().x - 8 + "px",
-        }}
-      ></div>
+      <Show when={hand.mode === "draw"}>
+        <div
+          class="absolute w-4 h-4 rounded-full bg-cyan-800 opacity-20 pointer-events-none"
+          style={{
+            top: snappedCursorScreenPos().y - 8 + "px",
+            left: snappedCursorScreenPos().x - 8 + "px",
+          }}
+        ></div>
+      </Show>
     </>
   );
 }
