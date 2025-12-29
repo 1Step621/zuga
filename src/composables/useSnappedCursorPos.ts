@@ -4,8 +4,9 @@ import { cameraStore } from "~/stores/cameraStore";
 import { useWindowSize } from "./useWindowSize";
 import { screenToWorld } from "~/utilities/coordinate";
 import { toWorldPos } from "~/utilities/pos";
+import { createMemo } from "solid-js";
 
-export const useSnappedCursorPos = () => {
+export const useSnappedCursorPos = createMemo(() => {
   const cursorPos = useCursorPos();
   const [camera, _setCamera] = cameraStore;
   const windowSize = useWindowSize();
@@ -21,4 +22,4 @@ export const useSnappedCursorPos = () => {
   };
 
   return snappedCursorPos;
-};
+});
