@@ -1,14 +1,29 @@
 import { WorldPos } from "~/utilities/pos";
 import { Kind } from "../kind";
 
-export type ShapeProps = {
-  rectangle: { x: number; y: number; width: number; height: number };
-  ellipse: { cx: number; cy: number; rx: number; ry: number };
-  line: { points: WorldPos[] };
-  text: { x: number; y: number };
-};
+export type ShapeProps<K extends Kind> = {
+  rectangle: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  ellipse: {
+    cx: number;
+    cy: number;
+    rx: number;
+    ry: number;
+  };
+  line: {
+    points: WorldPos[];
+  };
+  text: {
+    x: number;
+    y: number;
+  };
+}[K];
 
-export const shapeProps: { [K in Kind]: (props: WorldPos[]) => ShapeProps[K] } =
+export const shapeProps: { [K in Kind]: (props: WorldPos[]) => ShapeProps<K> } =
   {
     rectangle: (points: WorldPos[]) => {
       const x = Math.min(points[0].x, points[1].x);
@@ -36,10 +51,3 @@ export const shapeProps: { [K in Kind]: (props: WorldPos[]) => ShapeProps[K] } =
       return { x: points[0].x, y: points[0].y };
     },
   };
-
-export const shapeProp = <K extends Kind>(
-  kind: K,
-  points: WorldPos[]
-): ShapeProps[K] => {
-  return shapeProps[kind](points);
-};

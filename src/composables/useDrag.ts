@@ -4,7 +4,7 @@ export function useDrag<T>(
   handlers: {
     onStart: (start: ScreenPos) => T;
     onMove?: (start: ScreenPos, current: ScreenPos, initial: T) => void;
-    onEnd?: (start: ScreenPos, end: ScreenPos) => void;
+    onEnd?: (start: ScreenPos, end: ScreenPos, initial: T) => void;
   } = {
     onStart: () => {
       return {} as T;
@@ -14,16 +14,16 @@ export function useDrag<T>(
   const startDrag = (start: ScreenPos) => {
     const initial = handlers.onStart?.(start);
 
-    const handleMove = (ev: MouseEvent) => {
-      const end = asScreenPos({ x: ev.clientX, y: ev.clientY });
+    const handleMove = (e: MouseEvent) => {
+      const end = asScreenPos({ x: e.clientX, y: e.clientY });
       handlers.onMove?.(start, end, initial);
     };
 
-    const handleUp = (ev: MouseEvent) => {
+    const handleUp = (e: MouseEvent) => {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mouseup", handleUp);
-      const end = asScreenPos({ x: ev.clientX, y: ev.clientY });
-      handlers.onEnd?.(start, end);
+      const end = asScreenPos({ x: e.clientX, y: e.clientY });
+      handlers.onEnd?.(start, end, initial);
     };
 
     window.addEventListener("mousemove", handleMove);

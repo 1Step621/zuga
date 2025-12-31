@@ -13,10 +13,17 @@ export const useSnappedCursorPos = () => {
   const [grid] = gridStore;
 
   const world = createMemo(() => {
-    return asWorldPos({
+    const gridSnapped = asWorldPos({
       x: Math.round(cursorPos.world().x / grid.width) * grid.width,
       y: Math.round(cursorPos.world().y / grid.height) * grid.height,
     });
+    const distanceSquared =
+      Math.pow(gridSnapped.x - cursorPos.world().x, 2) +
+      Math.pow(gridSnapped.y - cursorPos.world().y, 2);
+    if (distanceSquared <= 5 * 5) {
+      return gridSnapped;
+    }
+    return cursorPos.world();
   });
 
   const screen = createMemo(() => {

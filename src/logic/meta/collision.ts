@@ -1,7 +1,11 @@
 import { WorldPos } from "../../utilities/pos";
 import { Content } from "../content";
+import { Kind } from "../kind";
 
-export const isColliding = (content: Content, pos: WorldPos): boolean => {
+export const isColliding = (
+  content: Content<Kind>,
+  pos: WorldPos
+): boolean => {
   switch (content.kind) {
     case "rectangle": {
       const rectShape = content.shapeProps;
@@ -15,6 +19,7 @@ export const isColliding = (content: Content, pos: WorldPos): boolean => {
       const withinY =
         pos.y >= rectShape.y - threshold &&
         pos.y <= rectShape.y + rectShape.height + threshold;
+
       const onLeftEdge = Math.abs(pos.x - rectShape.x) <= threshold && withinY;
       const onRightEdge =
         Math.abs(pos.x - (rectShape.x + rectShape.width)) <= threshold &&
@@ -24,7 +29,13 @@ export const isColliding = (content: Content, pos: WorldPos): boolean => {
         Math.abs(pos.y - (rectShape.y + rectShape.height)) <= threshold &&
         withinX;
 
-      return onLeftEdge || onRightEdge || onTopEdge || onBottomEdge;
+      return (
+        onLeftEdge ||
+        onRightEdge ||
+        onTopEdge ||
+        onBottomEdge ||
+        (rectOther.color !== "transparent" && withinX && withinY)
+      );
     }
     case "ellipse": {
       const ellipseShape = content.shapeProps;
@@ -40,8 +51,9 @@ export const isColliding = (content: Content, pos: WorldPos): boolean => {
       const strokeAdjustmentY = (ellipseOther.strokeWidth / 2 + 10) / ry;
 
       return (
-        distance >= 1 - strokeAdjustmentX - strokeAdjustmentY &&
-        distance <= 1 + strokeAdjustmentX + strokeAdjustmentY
+        (distance >= 1 - strokeAdjustmentX - strokeAdjustmentY &&
+          distance <= 1 + strokeAdjustmentX + strokeAdjustmentY) ||
+        (ellipseOther.color !== "transparent" && distance < 1)
       );
     }
     case "line": {
@@ -84,12 +96,7 @@ export const isColliding = (content: Content, pos: WorldPos): boolean => {
       return false;
     }
     case "text": {
-      return (
-        Math.hypot(
-          pos.x - content.shapeProps.x,
-          pos.y - content.shapeProps.y
-        ) <= 10
-      );
+      return true;
     }
     default:
       content satisfies never;

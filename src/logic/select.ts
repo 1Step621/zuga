@@ -1,25 +1,24 @@
 import { contentsStore } from "~/stores/contentsStore";
 import { handStore } from "~/stores/handStore";
-import { WorldPos } from "~/utilities/pos";
-import { isColliding } from "./meta/collision";
 import { batch } from "solid-js";
 
-export const select = (pos: WorldPos, keep: boolean) => {
+export const deselectAll = () => {
   const [hand, setHand] = handStore;
-  const [contents] = contentsStore;
+  if (hand.mode !== "select") return;
+  setHand({ selecteds: new Set() });
+};
+
+export const deleteSelection = () => {
+  const [hand, setHand] = handStore;
+  const [contents, setContents] = contentsStore;
   if (hand.mode !== "select") return;
 
   batch(() => {
-    if (!keep) {
-      setHand({ selecteds: new Set() });
-    }
-    const clicked = Object.values(contents.contents).find((content) =>
-      isColliding(content, pos)
-    );
-    if (clicked) {
-      setHand({
-        selecteds: new Set(hand.selecteds).add(clicked.uuid),
-      });
-    }
+    const newContents = { ...contents.contents };
+    hand.selecteds.forEach((uuid) => {
+      delete newContents[uuid];
+    });
+    setContents({ contents: newContents });
+    setHand({ selecteds: new Set() });
   });
 };

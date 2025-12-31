@@ -1,7 +1,7 @@
 import { thumbnails } from "~/logic/meta/thumbnails";
 import { handStore } from "~/stores/handStore";
 import { Kind, kinds } from "~/logic/kind";
-import { createSignal, For, JSX, Show } from "solid-js";
+import { createSignal, For, JSX } from "solid-js";
 import {
   TbClick,
   TbLayoutSidebarLeftCollapse,
@@ -9,7 +9,7 @@ import {
   TbPencil,
 } from "solid-icons/tb";
 import { defaultHand, Hand } from "~/logic/hand";
-import { readables } from "~/logic/meta/readables";
+import { names } from "~/logic/meta/names";
 
 export default function Sidebar() {
   const [hand, setHand] = handStore;
@@ -44,7 +44,7 @@ export default function Sidebar() {
         onClick={() => setHand({ ...defaultHand("draw"), kind: props.kind })}
       >
         {thumbnails[props.kind]}
-        {readables[props.kind]}
+        {names[props.kind]}
       </button>
     );
   };
@@ -52,7 +52,7 @@ export default function Sidebar() {
   return (
     <>
       <aside
-        class="absolute w-90 max-w-[50%] h-screen p-4 bg-white/50 border-r border-gray-200 transition-[left]"
+        class="absolute w-90 max-w-[50%] h-screen p-4 bg-white/90 border-r border-gray-200 transition-[left]"
         style={{
           left: isOpen() ? "0px" : "calc(var(--spacing) * -90)",
         }}

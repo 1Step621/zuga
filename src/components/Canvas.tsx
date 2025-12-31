@@ -1,25 +1,25 @@
-import { createMemo, createSignal, For, Show } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import { useDrag } from "~/composables/useDrag";
 import { useSnappedCursorPos } from "~/composables/useSnappedCursorPos";
 import { useWindowSize } from "~/composables/useWindowSize";
 import { addPoint, cancelDrawing, finishIfPossible } from "~/logic/draw";
-import { select } from "~/logic/select";
+import { deleteSelection, deselectAll } from "~/logic/select";
 import { cameraStore } from "~/stores/cameraStore";
 import { clickStore } from "~/stores/clickStore";
 import { contentsStore } from "~/stores/contentsStore";
 import { gridStore } from "~/stores/gridStore";
 import { handStore } from "~/stores/handStore";
 import { isSatisfied } from "~/utilities/constraint";
-import { worldToScreen } from "~/utilities/coordinate";
-import { asWorldPos } from "~/utilities/pos";
+import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
+import { asScreenPos, asWorldPos } from "~/utilities/pos";
 import { Svg } from "~/logic/meta/svgs";
 import { requiredPoints } from "~/logic/meta/requiredPoints";
-import { shapeProp } from "~/logic/meta/shapeProps";
-import { defaultOtherProp } from "~/logic/meta/otherProps";
+import { shapeProps } from "~/logic/meta/shapeProps";
+import { defaultOtherProps } from "~/logic/meta/otherProps";
 import { Content } from "~/logic/content";
-import { useSampled } from "~/composables/useDebounced";
-import { isColliding } from "~/logic/meta/collision";
 import Item from "./Item";
+import { useHotkey } from "~/composables/useHotkey";
+import { useCursorPos } from "~/composables/useCursorPos";
 
 export default function Canvas() {
   const [grid] = gridStore;
@@ -29,14 +29,7 @@ export default function Canvas() {
   const [, setClick] = clickStore;
   const windowSize = useWindowSize();
   const snappedCursorPos = useSnappedCursorPos();
-  const cursorPos = useSnappedCursorPos();
-  const sampledWorldCursorPos = useSampled(cursorPos.world, 100);
-
-  const hovereds = createMemo(() => {
-    return Object.values(content.contents).filter((c) => {
-      isColliding(c, sampledWorldCursorPos());
-    });
-  });
+  const cursorPos = useCursorPos();
 
   const gridSize = createMemo(() => ({
     width: grid.width * camera.scale,
@@ -58,17 +51,41 @@ export default function Canvas() {
     };
   });
 
+  const northWest = () =>
+    screenToWorld(asScreenPos({ x: 0, y: 0 }), camera, windowSize());
+  const southEast = () =>
+    screenToWorld(
+      asScreenPos({ x: windowSize().width, y: windowSize().height }),
+      camera,
+      windowSize()
+    );
+
+  const currentContent = () => {
+    if (hand.mode !== "draw") return null;
+    if (!isSatisfied(requiredPoints[hand.kind], hand.points.length + 1))
+      return null;
+    return {
+      uuid: "preview-preview-preview-preview-preview",
+      kind: hand.kind,
+      shapeProps: shapeProps[hand.kind]([
+        ...hand.points,
+        snappedCursorPos.world(),
+      ]),
+      otherProps: defaultOtherProps[hand.kind],
+    } as Content<typeof hand.kind>;
+  };
+
   const { startDrag: pan } = useDrag({
     onStart: () => {
-      return { x: camera.center.x, y: camera.center.y };
+      return { ...camera };
     },
     onMove: (start, current, initialCamera) => {
-      const dx = (start.x - current.x) / camera.scale;
-      const dy = (start.y - current.y) / camera.scale;
+      const dx = (start.x - current.x) / initialCamera.scale;
+      const dy = (start.y - current.y) / initialCamera.scale;
       setCamera({
         center: asWorldPos({
-          x: initialCamera.x + dx,
-          y: initialCamera.y + dy,
+          x: initialCamera.center.x + dx,
+          y: initialCamera.center.y + dy,
         }),
       });
     },
@@ -78,7 +95,7 @@ export default function Canvas() {
     if (hand.mode === "select") {
       switch (e.button) {
         case 0:
-          select(snappedCursorPos.world(), e.shiftKey);
+          deselectAll();
           return;
         case 1:
           e.preventDefault();
@@ -128,6 +145,10 @@ export default function Canvas() {
     });
   };
 
+  useHotkey("Delete", () => {
+    deleteSelection();
+  });
+
   return (
     <main
       class="w-full h-screen text-gray-100 bg-grid"
@@ -143,10 +164,10 @@ export default function Canvas() {
         width="100%"
         height="100%"
         viewBox={[
-          camera.center.x - windowSize().width / 2 / camera.scale,
-          camera.center.y - windowSize().height / 2 / camera.scale,
-          windowSize().width / camera.scale,
-          windowSize().height / camera.scale,
+          northWest().x,
+          northWest().y,
+          southEast().x - northWest().x,
+          southEast().y - northWest().y,
         ].join(" ")}
         onMouseDown={handleMousedown}
         onMouseUp={handleMouseup}
@@ -157,29 +178,8 @@ export default function Canvas() {
           {(content) => <Item content={content} />}
         </For>
 
-        <Show
-          when={
-            hand.mode === "draw" &&
-            isSatisfied(requiredPoints[hand.kind], hand.points.length + 1) &&
-            hand
-          }
-        >
-          {(hand) => (
-            <Svg
-              content={
-                {
-                  uuid: "preview-preview-preview-preview-preview",
-                  kind: hand().kind,
-                  shapeProps: shapeProp(hand().kind, [
-                    ...hand().points,
-                    snappedCursorPos.world(),
-                  ]),
-                  otherProps: defaultOtherProp(hand().kind),
-                } as Content
-              }
-              class="opacity-50"
-            />
-          )}
+        <Show when={currentContent()}>
+          {(content) => <Svg content={content()} class="opacity-50" />}
         </Show>
       </svg>
     </main>

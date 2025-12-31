@@ -7,8 +7,8 @@ import { Content } from "../content";
 
 const propsExcluded = (
   props: {
-    shapeProps: ShapeProps[Kind];
-    otherProps: OtherProps[Kind];
+    shapeProps: ShapeProps<Kind>;
+    otherProps: OtherProps<Kind>;
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
   return splitProps(props, ["shapeProps", "otherProps"])[1];
@@ -17,8 +17,8 @@ const propsExcluded = (
 export const svgs: {
   [K in Kind]: (
     props: {
-      shapeProps: ShapeProps[K];
-      otherProps: OtherProps[K];
+      shapeProps: ShapeProps<K>;
+      otherProps: OtherProps<K>;
     } & JSX.ShapeElementSVGAttributes<any>
   ) => JSX.Element;
 } = {
@@ -63,22 +63,22 @@ export const svgs: {
       fill={props.otherProps.color}
       {...propsExcluded(props)}
     >
-      {props.otherProps.content.toString()}
+      {props.otherProps.content}
     </text>
   ),
 };
 
-const contentExcluded = (
+const contentExcluded = <K extends Kind>(
   props: {
-    content: Content;
+    content: Content<K>;
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
   return splitProps(props, ["content"])[1];
 };
 
-export const Svg = (
+export const Svg = <K extends Kind>(
   props: {
-    content: Content;
+    content: Content<K>;
   } & JSX.ShapeElementSVGAttributes<any>
 ): JSX.Element => {
   return (
