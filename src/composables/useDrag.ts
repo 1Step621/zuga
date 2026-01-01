@@ -6,7 +6,7 @@ export function useDrag(handlers: {
   onEnd?: (start: ScreenPos, end: ScreenPos) => void;
 }) {
   const startDrag = (start: ScreenPos) => {
-    const initial = handlers.onStart?.(start);
+    handlers.onStart?.(start);
 
     const handleMove = (e: MouseEvent) => {
       const end = asScreenPos({ x: e.clientX, y: e.clientY });

@@ -10,6 +10,7 @@ import { useDrag } from "~/composables/useDrag";
 import { contentsStore } from "~/stores/contentsStore";
 import { cameraStore } from "~/stores/cameraStore";
 import { asWorldPos } from "~/utilities/pos";
+import { Portal } from "solid-js/web";
 
 export default function Item<K extends Kind>(props: { content: Content<K> }) {
   let ref: SVGGraphicsElement | undefined;
@@ -79,6 +80,7 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
 
   const handleBodyMousedown = (e: MouseEvent) => {
     if (hand.mode !== "select") return;
+    console.log("down on body");
     if (isHovering()) {
       e.stopPropagation();
       if (e.shiftKey) {
@@ -125,6 +127,7 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
   const handlePointMousedown = (e: MouseEvent) => {
     if (hand.mode !== "select") return;
     e.stopPropagation();
+    console.log("down on point");
     setDraggingPointIndex(
       Number((e.currentTarget! as HTMLElement).getAttribute("data-index"))
     );
@@ -142,22 +145,25 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
         }
       >
         {(hand) => (
-          <rect
-            x={(rect()?.x ?? 0) - 10}
-            y={(rect()?.y ?? 0) - 10}
-            width={(rect()?.width ?? 0) + 20}
-            height={(rect()?.height ?? 0) + 20}
-            fill="transparent"
-            stroke={
-              hand().selecteds.has(props.content.uuid)
-                ? "var(--color-cyan-500)"
-                : "var(--color-cyan-700)"
-            }
-            stroke-width={2 / camera.scale}
-            onMouseDown={handleBodyMousedown}
-          />
+          <Portal mount={document.getElementById("rect-portal")!} isSVG>
+            <rect
+              x={(rect()?.x ?? 0) - 10}
+              y={(rect()?.y ?? 0) - 10}
+              width={(rect()?.width ?? 0) + 20}
+              height={(rect()?.height ?? 0) + 20}
+              fill="transparent"
+              stroke={
+                hand().selecteds.has(props.content.uuid)
+                  ? "var(--color-cyan-500)"
+                  : "var(--color-cyan-700)"
+              }
+              stroke-width={2 / camera.scale}
+              onMouseDown={handleBodyMousedown}
+            />
+          </Portal>
         )}
       </Show>
+
       <Show
         when={
           hand.mode === "select" &&
@@ -165,20 +171,22 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
           hand
         }
       >
-        <Index each={contents.contents[props.content.uuid].points}>
-          {(pt, index) => (
-            <circle
-              cx={pt().x}
-              cy={pt().y}
-              r={6 / camera.scale}
-              fill="var(--color-white)"
-              stroke="var(--color-cyan-500)"
-              stroke-width={2 / camera.scale}
-              onMouseDown={handlePointMousedown}
-              data-index={index}
-            />
-          )}
-        </Index>
+        <Portal mount={document.getElementById("point-portal")!} isSVG>
+          <Index each={contents.contents[props.content.uuid].points}>
+            {(pt, index) => (
+              <circle
+                cx={pt().x}
+                cy={pt().y}
+                r={6 / camera.scale}
+                fill="var(--color-white)"
+                stroke="var(--color-cyan-500)"
+                stroke-width={2 / camera.scale}
+                onMouseDown={handlePointMousedown}
+                data-index={index}
+              />
+            )}
+          </Index>
+        </Portal>
       </Show>
     </>
   );

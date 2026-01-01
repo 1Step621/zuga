@@ -176,12 +176,11 @@ export default function Canvas() {
         </For>
 
         <Show when={currentContent()}>
-          {(content) => (
-            <>
-              <Svg content={content()} class="opacity-50" />
-            </>
-          )}
+          {(content) => <Svg content={content()} class="opacity-50" />}
         </Show>
+
+        <g id="rect-portal"></g>
+        <g id="point-portal"></g>
       </svg>
     </main>
   );

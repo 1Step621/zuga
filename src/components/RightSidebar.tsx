@@ -5,6 +5,7 @@ import { handStore } from "~/stores/handStore";
 import Field from "./Field";
 import { Content } from "~/logic/content";
 import { Kind } from "~/logic/kind";
+import { Props } from "~/logic/meta/props";
 
 export default function RightSidebar<K extends Kind>() {
   const [hand] = handStore;
@@ -15,6 +16,22 @@ export default function RightSidebar<K extends Kind>() {
       ? (contents.contents[hand.selecteds.values().toArray()[0]] as Content<K>)
       : null;
 
+  const setField = (key: keyof Props<K>, value: any) => {
+    if (!target()) return;
+    setContents({
+      contents: {
+        ...contents.contents,
+        [target()!.uuid]: {
+          ...target(),
+          props: {
+            ...target()!.props,
+            [key]: value,
+          },
+        },
+      },
+    });
+  };
+
   return (
     <aside
       class="absolute w-90 max-w-[50%] h-screen p-4 bg-white/90 border-l border-gray-200 transition-[right]"
@@ -23,32 +40,17 @@ export default function RightSidebar<K extends Kind>() {
       }}
     >
       <Show when={target()}>
-        {(target) => (
-          <div class="flex flex-col gap-4">
-            <Index each={fieldsOfProps[target().kind]}>
-              {(field) => (
-                <Field
-                  field={field()}
-                  value={target().props[field().key]}
-                  onChange={(v) =>
-                    setContents({
-                      contents: {
-                        ...contents.contents,
-                        [target().uuid]: {
-                          ...target(),
-                          props: {
-                            ...target().props,
-                            [field().key]: v,
-                          },
-                        },
-                      },
-                    })
-                  }
-                />
-              )}
-            </Index>
-          </div>
-        )}
+        <div class="flex flex-col gap-4">
+          <Index each={fieldsOfProps[target()!.kind]}>
+            {(field) => (
+              <Field
+                field={field()}
+                value={target()!.props[field().key]}
+                onChange={(v) => setField(field().key, v)}
+              />
+            )}
+          </Index>
+        </div>
       </Show>
     </aside>
   );
