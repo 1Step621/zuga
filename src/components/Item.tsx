@@ -1,6 +1,6 @@
 import { Content } from "~/logic/content";
 import { Svg } from "~/logic/meta/svgs";
-import { createMemo, createSignal, onMount, Show } from "solid-js";
+import { createMemo, createSignal, Index, onMount, Show } from "solid-js";
 import { handStore } from "~/stores/handStore";
 import { useCursorPos } from "~/composables/useCursorPos";
 import { useSampled } from "~/composables/useDebounced";
@@ -54,20 +54,17 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
     }
   });
 
-  const { startDrag } = useDrag({
+  const startBodyDrag = useDrag({
     onStart: () => {
       return props.content.points;
     },
-    onMove: (start, current, initialPoints) => {
+    onMove: (start, current) => {
       if (hand.mode !== "select") return;
       const dx = (current.x - start.x) / camera.scale;
       const dy = (current.y - start.y) / camera.scale;
-      const points = initialPoints.map((pt) =>
-        asWorldPos({
-          x: pt.x + dx,
-          y: pt.y + dy,
-        })
-      );
+      const points = props.content.points.map((pt) => {
+        return asWorldPos({ x: pt.x + dx, y: pt.y + dy });
+      });
       setContents({
         contents: {
           ...contents.contents,
@@ -80,7 +77,7 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
     },
   });
 
-  const handleMousedown = (e: MouseEvent) => {
+  const handleBodyMousedown = (e: MouseEvent) => {
     if (hand.mode !== "select") return;
     if (isHovering()) {
       e.stopPropagation();
@@ -94,9 +91,44 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
         setHand({ selecteds: newSelecteds });
       } else {
         setHand({ selecteds: new Set([props.content.uuid]) });
-        startDrag(cursorPos.screen());
+        startBodyDrag(cursorPos.screen());
       }
     }
+  };
+
+  const [draggingPointIndex, setDraggingPointIndex] = createSignal<
+    number | null
+  >(null);
+  const startPointDrag = useDrag({
+    onStart: () => {},
+    onMove: (start, current) => {
+      if (hand.mode !== "select") return;
+      const dx = (current.x - start.x) / camera.scale;
+      const dy = (current.y - start.y) / camera.scale;
+      const points = [...props.content.points];
+      points[draggingPointIndex()!] = asWorldPos({
+        x: points[draggingPointIndex()!].x + dx,
+        y: points[draggingPointIndex()!].y + dy,
+      });
+      setContents({
+        contents: {
+          ...contents.contents,
+          [props.content.uuid]: {
+            ...props.content,
+            points,
+          },
+        },
+      });
+    },
+  });
+
+  const handlePointMousedown = (e: MouseEvent) => {
+    if (hand.mode !== "select") return;
+    e.stopPropagation();
+    setDraggingPointIndex(
+      Number((e.currentTarget! as HTMLElement).getAttribute("data-index"))
+    );
+    startPointDrag(cursorPos.screen());
   };
 
   return (
@@ -121,10 +153,32 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
                 ? "var(--color-cyan-500)"
                 : "var(--color-cyan-700)"
             }
-            stroke-width={2}
-            onMouseDown={handleMousedown}
+            stroke-width={2 / camera.scale}
+            onMouseDown={handleBodyMousedown}
           />
         )}
+      </Show>
+      <Show
+        when={
+          hand.mode === "select" &&
+          hand.selecteds.has(props.content.uuid) &&
+          hand
+        }
+      >
+        <Index each={contents.contents[props.content.uuid].points}>
+          {(pt, index) => (
+            <circle
+              cx={pt().x}
+              cy={pt().y}
+              r={6 / camera.scale}
+              fill="var(--color-white)"
+              stroke="var(--color-cyan-500)"
+              stroke-width={2 / camera.scale}
+              onMouseDown={handlePointMousedown}
+              data-index={index}
+            />
+          )}
+        </Index>
       </Show>
     </>
   );

@@ -1,4 +1,4 @@
-import { createMemo, For, Show } from "solid-js";
+import { createMemo, createSignal, For, Show } from "solid-js";
 import { useDrag } from "~/composables/useDrag";
 import { useSnappedCursorPos } from "~/composables/useSnappedCursorPos";
 import { useWindowSize } from "~/composables/useWindowSize";
@@ -71,17 +71,18 @@ export default function Canvas() {
     } as Content<typeof hand.kind>;
   };
 
-  const { startDrag: pan } = useDrag({
+  const [cameraBeforePan, setCameraBeforePan] = createSignal(camera);
+  const pan = useDrag({
     onStart: () => {
-      return { ...camera };
+      setCameraBeforePan({ ...camera });
     },
-    onMove: (start, current, initialCamera) => {
-      const dx = (start.x - current.x) / initialCamera.scale;
-      const dy = (start.y - current.y) / initialCamera.scale;
+    onMove: (start, current) => {
+      const dx = (start.x - current.x) / cameraBeforePan().scale;
+      const dy = (start.y - current.y) / cameraBeforePan().scale;
       setCamera({
         center: asWorldPos({
-          x: initialCamera.center.x + dx,
-          y: initialCamera.center.y + dy,
+          x: cameraBeforePan().center.x + dx,
+          y: cameraBeforePan().center.y + dy,
         }),
       });
     },
