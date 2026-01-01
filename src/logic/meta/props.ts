@@ -1,6 +1,6 @@
 import { Kind } from "../kind";
 
-export type OtherProps<K extends Kind> = {
+export type Props<K extends Kind> = {
   rectangle: {
     color: string;
     strokeColor: string;
@@ -22,7 +22,7 @@ export type OtherProps<K extends Kind> = {
   };
 }[K];
 
-export const defaultOtherProps: { [K in Kind]: OtherProps<K> } = {
+export const defaultProps: { [K in Kind]: Props<K> } = {
   rectangle: {
     color: "transparent",
     strokeColor: "#000000",

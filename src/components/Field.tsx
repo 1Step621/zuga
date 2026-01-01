@@ -1,4 +1,4 @@
-import { OtherPropField } from "~/logic/meta/otherPropFields";
+import { OtherPropField } from "~/logic/meta/fields";
 import KeyValue from "./KeyValue";
 import { Match, Switch } from "solid-js";
 import ColorPicker from "./ColorPicker";

@@ -1,20 +1,20 @@
 import { Kind } from "../kind";
-import { OtherProps } from "./otherProps";
+import { Props } from "./props";
 
 export type ColorField<K extends Kind> = {
-  key: keyof OtherProps<K>;
+  key: keyof Props<K>;
   name: string;
   type: "color";
 };
 
 export type LengthField<K extends Kind> = {
-  key: keyof OtherProps<K>;
+  key: keyof Props<K>;
   name: string;
   type: "length";
 };
 
 export type TextField<K extends Kind> = {
-  key: keyof OtherProps<K>;
+  key: keyof Props<K>;
   name: string;
   multiline?: boolean;
   type: "text";
@@ -25,7 +25,7 @@ export type OtherPropField<K extends Kind> =
   | LengthField<K>
   | TextField<K>;
 
-export const fieldsOfOtherProps: { [K in Kind]: OtherPropField<K>[] } = {
+export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
   rectangle: [
     {
       key: "color",

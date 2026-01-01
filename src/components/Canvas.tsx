@@ -14,8 +14,7 @@ import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
 import { asScreenPos, asWorldPos } from "~/utilities/pos";
 import { Svg } from "~/logic/meta/svgs";
 import { requiredPoints } from "~/logic/meta/requiredPoints";
-import { shapeProps } from "~/logic/meta/shapeProps";
-import { defaultOtherProps } from "~/logic/meta/otherProps";
+import { defaultProps } from "~/logic/meta/props";
 import { Content } from "~/logic/content";
 import Item from "./Item";
 import { useHotkey } from "~/composables/useHotkey";
@@ -67,11 +66,8 @@ export default function Canvas() {
     return {
       uuid: "preview-preview-preview-preview-preview",
       kind: hand.kind,
-      shapeProps: shapeProps[hand.kind]([
-        ...hand.points,
-        snappedCursorPos.world(),
-      ]),
-      otherProps: defaultOtherProps[hand.kind],
+      points: [...hand.points, snappedCursorPos.world()],
+      props: defaultProps[hand.kind],
     } as Content<typeof hand.kind>;
   };
 
@@ -179,7 +175,11 @@ export default function Canvas() {
         </For>
 
         <Show when={currentContent()}>
-          {(content) => <Svg content={content()} class="opacity-50" />}
+          {(content) => (
+            <>
+              <Svg content={content()} class="opacity-50" />
+            </>
+          )}
         </Show>
       </svg>
     </main>

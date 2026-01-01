@@ -4,8 +4,12 @@ import { createMemo, createSignal, onMount, Show } from "solid-js";
 import { handStore } from "~/stores/handStore";
 import { useCursorPos } from "~/composables/useCursorPos";
 import { useSampled } from "~/composables/useDebounced";
-import { isColliding } from "~/logic/meta/collision";
+import { isColliding } from "~/logic/meta/collisions";
 import { Kind } from "~/logic/kind";
+import { useDrag } from "~/composables/useDrag";
+import { contentsStore } from "~/stores/contentsStore";
+import { cameraStore } from "~/stores/cameraStore";
+import { asWorldPos } from "~/utilities/pos";
 
 export default function Item<K extends Kind>(props: { content: Content<K> }) {
   let ref: SVGGraphicsElement | undefined;
@@ -16,6 +20,9 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
     height: number;
   }>();
   const [hand, setHand] = handStore;
+  const [contents, setContents] = contentsStore;
+  const [camera] = cameraStore;
+
   const cursorPos = useCursorPos();
   const sampledWorldCursorPos = useSampled(cursorPos.world, 100);
   const isHovering = createMemo(() => {
@@ -47,6 +54,32 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
     }
   });
 
+  const { startDrag } = useDrag({
+    onStart: () => {
+      return props.content.points;
+    },
+    onMove: (start, current, initialPoints) => {
+      if (hand.mode !== "select") return;
+      const dx = (current.x - start.x) / camera.scale;
+      const dy = (current.y - start.y) / camera.scale;
+      const points = initialPoints.map((pt) =>
+        asWorldPos({
+          x: pt.x + dx,
+          y: pt.y + dy,
+        })
+      );
+      setContents({
+        contents: {
+          ...contents.contents,
+          [props.content.uuid]: {
+            ...props.content,
+            points,
+          },
+        },
+      });
+    },
+  });
+
   const handleMousedown = (e: MouseEvent) => {
     if (hand.mode !== "select") return;
     if (isHovering()) {
@@ -61,6 +94,7 @@ export default function Item<K extends Kind>(props: { content: Content<K> }) {
         setHand({ selecteds: newSelecteds });
       } else {
         setHand({ selecteds: new Set([props.content.uuid]) });
+        startDrag(cursorPos.screen());
       }
     }
   };

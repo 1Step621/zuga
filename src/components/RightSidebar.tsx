@@ -1,5 +1,5 @@
 import { Index, Show } from "solid-js";
-import { fieldsOfOtherProps } from "~/logic/meta/otherPropFields";
+import { fieldsOfProps } from "~/logic/meta/fields";
 import { contentsStore } from "~/stores/contentsStore";
 import { handStore } from "~/stores/handStore";
 import Field from "./Field";
@@ -25,19 +25,19 @@ export default function RightSidebar<K extends Kind>() {
       <Show when={target()}>
         {(target) => (
           <div class="flex flex-col gap-4">
-            <Index each={fieldsOfOtherProps[target().kind]}>
+            <Index each={fieldsOfProps[target().kind]}>
               {(field) => (
                 <Field
                   field={field()}
-                  value={target().otherProps[field().key]}
+                  value={target().props[field().key]}
                   onChange={(v) =>
                     setContents({
                       contents: {
                         ...contents.contents,
                         [target().uuid]: {
                           ...target(),
-                          otherProps: {
-                            ...target().otherProps,
+                          props: {
+                            ...target().props,
                             [field().key]: v,
                           },
                         },

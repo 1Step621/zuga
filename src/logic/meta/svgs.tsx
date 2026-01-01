@@ -1,71 +1,86 @@
 import { JSX, splitProps } from "solid-js";
 import { Kind } from "../kind";
 import { Dynamic } from "solid-js/web";
-import { ShapeProps } from "./shapeProps";
-import { OtherProps } from "./otherProps";
+import { Props } from "./props";
 import { Content } from "../content";
+import { WorldPos } from "~/utilities/pos";
+import { prerenders } from "./prerenders";
 
 const propsExcluded = (
   props: {
-    shapeProps: ShapeProps<Kind>;
-    otherProps: OtherProps<Kind>;
+    points: WorldPos[];
+    props: Props<Kind>;
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
-  return splitProps(props, ["shapeProps", "otherProps"])[1];
+  return splitProps(props, ["points", "props"])[1];
 };
 
 export const svgs: {
   [K in Kind]: (
     props: {
-      shapeProps: ShapeProps<K>;
-      otherProps: OtherProps<K>;
+      points: WorldPos[];
+      props: Props<K>;
     } & JSX.ShapeElementSVGAttributes<any>
   ) => JSX.Element;
 } = {
-  rectangle: (props) => (
-    <rect
-      x={props.shapeProps.x}
-      y={props.shapeProps.y}
-      width={props.shapeProps.width}
-      height={props.shapeProps.height}
-      fill={props.otherProps.color}
-      stroke={props.otherProps.strokeColor}
-      stroke-width={props.otherProps.strokeWidth}
-      {...propsExcluded(props)}
-    />
-  ),
-  ellipse: (props) => (
-    <ellipse
-      cx={props.shapeProps.cx}
-      cy={props.shapeProps.cy}
-      rx={props.shapeProps.rx}
-      ry={props.shapeProps.ry}
-      fill={props.otherProps.color}
-      stroke={props.otherProps.strokeColor}
-      stroke-width={props.otherProps.strokeWidth}
-      {...propsExcluded(props)}
-    />
-  ),
-  line: (props) => (
-    <polyline
-      points={props.shapeProps.points.map((pt) => `${pt.x},${pt.y}`).join(" ")}
-      fill="none"
-      stroke={props.otherProps.color}
-      stroke-width={props.otherProps.strokeWidth}
-      {...propsExcluded(props)}
-    />
-  ),
-  text: (props) => (
-    <text
-      x={props.shapeProps.x}
-      y={props.shapeProps.y}
-      font-size={props.otherProps.fontSize + "px"}
-      fill={props.otherProps.color}
-      {...propsExcluded(props)}
-    >
-      {props.otherProps.content}
-    </text>
-  ),
+  rectangle: (props) => {
+    const shape = () => prerenders.rectangle(props.points);
+    return (
+      <rect
+        x={shape().position.x}
+        y={shape().position.y}
+        width={shape().width}
+        height={shape().height}
+        fill={props.props.color}
+        stroke={props.props.strokeColor}
+        stroke-width={props.props.strokeWidth}
+        {...propsExcluded(props)}
+      />
+    );
+  },
+  ellipse: (props) => {
+    const shape = () => prerenders.ellipse(props.points);
+    return (
+      <ellipse
+        cx={shape().center.x}
+        cy={shape().center.y}
+        rx={shape().rx}
+        ry={shape().ry}
+        fill={props.props.color}
+        stroke={props.props.strokeColor}
+        stroke-width={props.props.strokeWidth}
+        {...propsExcluded(props)}
+      />
+    );
+  },
+  line: (props) => {
+    const shape = () => prerenders.line(props.points);
+    return (
+      <polyline
+        points={shape()
+          .points.map((pt) => `${pt.x},${pt.y}`)
+          .join(" ")}
+        fill="none"
+        stroke={props.props.color}
+        stroke-width={props.props.strokeWidth}
+        {...propsExcluded(props)}
+      />
+    );
+  },
+  text: (props) => {
+    const shape = () => prerenders.text(props.points);
+    return (
+      <text
+        x={shape().position.x}
+        y={shape().position.y}
+        font-size={props.props.fontSize + "px"}
+        fill={props.props.color}
+        {...propsExcluded(props)}
+      >
+        {props.props.content}
+      </text>
+    );
+  },
 };
 
 const contentExcluded = <K extends Kind>(
@@ -84,8 +99,8 @@ export const Svg = <K extends Kind>(
   return (
     <Dynamic
       component={svgs[props.content.kind] as () => JSX.Element}
-      shapeProps={props.content.shapeProps}
-      otherProps={props.content.otherProps}
+      points={props.content.points}
+      props={props.content.props}
       {...contentExcluded(props)}
     />
   );

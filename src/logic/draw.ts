@@ -6,8 +6,7 @@ import { isSatisfied } from "~/utilities/constraint";
 import { WorldPos } from "~/utilities/pos";
 import { batch } from "solid-js";
 import { requiredPoints } from "./meta/requiredPoints";
-import { shapeProps } from "./meta/shapeProps";
-import { defaultOtherProps } from "./meta/otherProps";
+import { defaultProps } from "./meta/props";
 
 const finish = () => {
   const [hand, setHand] = handStore;
@@ -21,9 +20,9 @@ const finish = () => {
       [newUuid]: {
         uuid: newUuid,
         kind: hand.kind,
-        shapeProps: shapeProps[hand.kind](hand.points),
-        otherProps: defaultOtherProps[hand.kind],
-      },
+        points: hand.points,
+        props: defaultProps[hand.kind],
+      } as Content<typeof hand.kind>,
     },
   });
   setHand({ points: [] });
