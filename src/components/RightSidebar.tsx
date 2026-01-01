@@ -12,7 +12,7 @@ export default function RightSidebar<K extends Kind>() {
   const [contents, setContents] = contentsStore;
 
   const target = () =>
-    hand.mode == "select" && hand.selecteds.size === 1
+    hand.mode == "select" && hand.selecteds.length === 1
       ? (contents.contents[hand.selecteds.values().toArray()[0]] as Content<K>)
       : null;
 
