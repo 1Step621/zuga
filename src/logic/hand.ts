@@ -1,3 +1,4 @@
+import { Uuid } from "~/utilities/uuid";
 import { WorldPos } from "../utilities/pos";
 import { Kind } from "./kind";
 
@@ -10,7 +11,7 @@ type Hands = {
   };
   select: {
     mode: "select";
-    selecteds: Set<`${string}-${string}-${string}-${string}-${string}`>;
+    selecteds: Uuid[];
     rect: {
       start: WorldPos;
       end: WorldPos;
@@ -30,7 +31,7 @@ export const defaultHand = <M extends Mode>(mode: M): Hands[M] => {
   } else {
     return {
       mode: "select",
-      selecteds: new Set(),
+      selecteds: [] as Uuid[],
       rect: null,
     } as Hands[M];
   }

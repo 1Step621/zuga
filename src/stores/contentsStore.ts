@@ -1,8 +1,9 @@
 import { createStore } from "solid-js/store";
 import { Content } from "~/logic/content";
 import { Kind } from "~/logic/kind";
+import { Uuid } from "~/utilities/uuid";
 
 export const contentsStore = createStore({
-  contents: {} as Record<`${string}-${string}-${string}-${string}-${string}`, Content<Kind>>,
-  rects: {} as Record<`${string}-${string}-${string}-${string}-${string}`, DOMRect>,
+  contents: {} as Record<Uuid, Content<Kind>>,
+  rects: {} as Record<Uuid, DOMRect>,
 });

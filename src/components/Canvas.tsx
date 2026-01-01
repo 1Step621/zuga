@@ -1,32 +1,45 @@
-import { createMemo, createSignal, For, Show } from "solid-js";
+import { createMemo, createSignal, For, Show, Index, onMount } from "solid-js";
 import { useDrag } from "~/composables/useDrag";
 import { useSnappedCursorPos } from "~/composables/useSnappedCursorPos";
 import { useWindowSize } from "~/composables/useWindowSize";
 import { addPoint, cancelDrawing, finishIfPossible } from "~/logic/draw";
-import { deleteSelection, deselectAll, selectByRect } from "~/logic/select";
+import {
+  deleteSelection,
+  deselectAll,
+  selectByRect,
+  selectSingle,
+  toggleSelection,
+} from "~/logic/select";
 import { cameraStore } from "~/stores/cameraStore";
 import { clickStore } from "~/stores/clickStore";
 import { contentsStore } from "~/stores/contentsStore";
 import { handStore } from "~/stores/handStore";
 import { isSatisfied } from "~/utilities/constraint";
 import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
-import { asScreenPos, asWorldPos } from "~/utilities/pos";
+import { asScreenPos, asWorldPos, WorldPos } from "~/utilities/pos";
 import { Svg } from "~/logic/meta/svgs";
 import { requiredPoints } from "~/logic/meta/requiredPoints";
 import { defaultProps } from "~/logic/meta/props";
 import { Content } from "~/logic/content";
-import Item from "./Item";
 import { useHotkey } from "~/composables/useHotkey";
 import { useCursorPos } from "~/composables/useCursorPos";
+import { isCollidingRectAndPoint } from "~/utilities/rectCollision";
+import { isColliding } from "~/logic/meta/collisions";
+import { useSampled } from "~/composables/useDebounced";
+import { Portal } from "solid-js/web";
+import { updateContentPoints, updatePointPosition } from "~/logic/transform";
+import { Uuid } from "~/utilities/uuid";
+import { Kind } from "~/logic/kind";
 
 export default function Canvas() {
   const [hand, setHand] = handStore;
-  const [contents] = contentsStore;
+  const [contents, setContents] = contentsStore;
   const [camera, setCamera] = cameraStore;
   const [, setClick] = clickStore;
   const windowSize = useWindowSize();
   const snappedCursorPos = useSnappedCursorPos();
   const cursorPos = useCursorPos();
+  const sampledWorldCursorPos = useSampled(cursorPos.world, 100);
 
   const gridSize = createMemo(() => ({
     width: 30 * camera.scale,
@@ -56,6 +69,22 @@ export default function Canvas() {
       props: defaultProps[hand.kind],
     } as Content<typeof hand.kind>;
   };
+
+  const hoveredId = createMemo(() => {
+    const cursor = sampledWorldCursorPos();
+    const ids = Object.keys(contents.contents).reverse() as Uuid[];
+    for (const id of ids) {
+      const rect = contents.rects[id];
+      if (!rect) continue;
+      if (
+        isCollidingRectAndPoint(rect, cursor) &&
+        isColliding(contents.contents[id], cursor)
+      ) {
+        return id;
+      }
+    }
+    return null;
+  });
 
   const [cameraBeforePan, setCameraBeforePan] = createSignal(camera);
   const pan = useDrag({
@@ -104,6 +133,65 @@ export default function Canvas() {
       setHand({
         rect: null,
       });
+    },
+  });
+
+  const [itemDragOriginals, setItemDragOriginals] = createSignal<
+    Content<Kind>[]
+  >([]);
+  const startItemDrag = useDrag({
+    onStart: () => {
+      if (hand.mode !== "select") return;
+      setItemDragOriginals(
+        hand.selecteds.map((uuid) => contents.contents[uuid])
+      );
+    },
+    onMove: (delta) => {
+      if (hand.mode !== "select") return;
+      for (const original of itemDragOriginals()) {
+        updateContentPoints(
+          original.uuid,
+          original.points,
+          delta,
+          camera.scale
+        );
+      }
+    },
+    onEnd: () => {
+      setItemDragOriginals([]);
+    },
+  });
+
+  const [pointDragOriginal, setPointDragOriginal] =
+    createSignal<WorldPos | null>(null);
+  const [pointDragIndex, setPointDragIndex] = createSignal<number | null>(null);
+  const startPointDrag = useDrag({
+    onStart: () => {
+      if (hand.mode !== "select") return;
+      if (hand.selecteds.length !== 1) return;
+      const index = pointDragIndex();
+      if (index === null) return;
+      setPointDragOriginal({
+        ...contents.contents[hand.selecteds[0]].points[index],
+      });
+    },
+    onMove: (delta) => {
+      if (hand.mode !== "select") return;
+      if (hand.selecteds.length !== 1) return;
+      const index = pointDragIndex();
+      if (index === null) return;
+      const original = pointDragOriginal();
+      if (!original) return;
+      updatePointPosition(
+        hand.selecteds[0],
+        index,
+        original,
+        delta,
+        camera.scale
+      );
+    },
+    onEnd: () => {
+      setPointDragIndex(null);
     },
   });
 
@@ -166,6 +254,52 @@ export default function Canvas() {
     deleteSelection();
   });
 
+  const handleItemMousedown = (e: MouseEvent, id: Uuid) => {
+    if (hand.mode !== "select") return;
+    e.stopPropagation();
+    if (e.shiftKey) {
+      toggleSelection(id);
+    } else {
+      if (!hand.selecteds.includes(id)) {
+        selectSingle(id);
+      }
+      startItemDrag(cursorPos.screen());
+    }
+  };
+
+  const handlePointMousedown = (e: MouseEvent, index: number) => {
+    if (hand.mode !== "select") return;
+    e.stopPropagation();
+    setPointDragIndex(index);
+    startPointDrag(cursorPos.screen());
+  };
+
+  const updateRect = (id: Uuid, el: SVGGraphicsElement) => {
+    const bbox = el.getBBox();
+    const strokeWidth = parseFloat(getComputedStyle(el).strokeWidth) || 0;
+    const expandedBBox = {
+      x: bbox.x - strokeWidth / 2,
+      y: bbox.y - strokeWidth / 2,
+      width: bbox.width + strokeWidth,
+      height: bbox.height + strokeWidth,
+    };
+    const current = contents.rects[id];
+    if (
+      !current ||
+      current.x !== expandedBBox.x ||
+      current.y !== expandedBBox.y ||
+      current.width !== expandedBBox.width ||
+      current.height !== expandedBBox.height
+    ) {
+      setContents({
+        rects: {
+          ...contents.rects,
+          [id]: expandedBBox,
+        },
+      });
+    }
+  };
+
   return (
     <main
       class="w-full h-screen text-slate-100 bg-grid slate"
@@ -192,7 +326,15 @@ export default function Canvas() {
         onContextMenu={(e) => e.preventDefault()}
       >
         <For each={Object.values(contents.contents)}>
-          {(content) => <Item content={content} />}
+          {(content) => {
+            let el: SVGGraphicsElement | undefined;
+            onMount(() => {
+              if (el) {
+                updateRect(content.uuid, el);
+              }
+            });
+            return <Svg content={content} ref={el} />;
+          }}
         </For>
 
         <Show when={currentContent()}>
@@ -206,12 +348,70 @@ export default function Canvas() {
               y={Math.min(rect().start.y, rect().end.y)}
               width={Math.abs(rect().end.x - rect().start.x)}
               height={Math.abs(rect().end.y - rect().start.y)}
-              fill="rgba(100, 149, 237, 0.3)"
-              stroke="cornflowerblue"
-              stroke-dasharray="4 4"
+              fill="color-mix(in oklab, var(--color-cyan-500) 20%, transparent)"
+              stroke="var(--color-cyan-500)"
+              stroke-width={2 / camera.scale}
+              stroke-dasharray={`${4 / camera.scale} ${4 / camera.scale}`}
             />
           )}
         </Show>
+
+        <Portal mount={document.getElementById("rect-portal")!} isSVG>
+          <For each={Object.values(contents.contents)}>
+            {(content) => (
+              <Show
+                when={
+                  (hand.mode === "select" &&
+                    hand.selecteds.includes(content.uuid)) ||
+                  (hoveredId() === content.uuid && hand.mode === "select")
+                }
+              >
+                <rect
+                  x={(contents.rects[content.uuid]?.x ?? 0) - 10}
+                  y={(contents.rects[content.uuid]?.y ?? 0) - 10}
+                  width={(contents.rects[content.uuid]?.width ?? 0) + 20}
+                  height={(contents.rects[content.uuid]?.height ?? 0) + 20}
+                  fill="transparent"
+                  stroke={
+                    hand.mode === "select" &&
+                    hand.selecteds.includes(content.uuid)
+                      ? "var(--color-cyan-500)"
+                      : "var(--color-cyan-700)"
+                  }
+                  stroke-width={2 / camera.scale}
+                  onMouseDown={(e) => handleItemMousedown(e, content.uuid)}
+                />
+              </Show>
+            )}
+          </For>
+        </Portal>
+
+        <Portal mount={document.getElementById("point-portal")!} isSVG>
+          <For each={Object.values(contents.contents)}>
+            {(content) => (
+              <Show
+                when={
+                  hand.mode === "select" &&
+                  hand.selecteds.includes(content.uuid)
+                }
+              >
+                <Index each={content.points}>
+                  {(pt, index) => (
+                    <circle
+                      cx={pt().x}
+                      cy={pt().y}
+                      r={6 / camera.scale}
+                      fill="var(--color-white)"
+                      stroke="var(--color-cyan-500)"
+                      stroke-width={2 / camera.scale}
+                      onMouseDown={(e) => handlePointMousedown(e, index)}
+                    />
+                  )}
+                </Index>
+              </Show>
+            )}
+          </For>
+        </Portal>
 
         <g id="rect-portal"></g>
         <g id="point-portal"></g>

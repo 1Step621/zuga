@@ -2,11 +2,12 @@ import { contentsStore } from "~/stores/contentsStore";
 import { handStore } from "~/stores/handStore";
 import { batch } from "solid-js";
 import { isCollidingRectAndRect } from "~/utilities/rectCollision";
+import { Uuid } from "~/utilities/uuid";
 
 export const deselectAll = () => {
   const [hand, setHand] = handStore;
   if (hand.mode !== "select") return;
-  setHand({ selecteds: new Set() });
+  setHand({ selecteds: [] });
 };
 
 export const deleteSelection = () => {
@@ -20,7 +21,7 @@ export const deleteSelection = () => {
       delete newContents[uuid];
     });
     setContents({ contents: newContents });
-    setHand({ selecteds: new Set() });
+    setHand({ selecteds: [] });
   });
 };
 
@@ -34,32 +35,31 @@ export const selectByRect = (rectSelection: {
   const [contents] = contentsStore;
   if (hand.mode !== "select") return;
 
-  const selecteds =
-    new Set<`${string}-${string}-${string}-${string}-${string}`>();
+  const selecteds = [] as Uuid[];
   for (const [id, rect] of Object.entries(contents.rects)) {
     if (isCollidingRectAndRect(rectSelection, rect)) {
-      selecteds.add(id as `${string}-${string}-${string}-${string}-${string}`);
+      selecteds.push(id as Uuid);
     }
   }
   setHand({ selecteds });
 };
 
-export const toggleSelection = (uuid: string) => {
+export const toggleSelection = (uuid: Uuid) => {
   const [hand, setHand] = handStore;
   if (hand.mode !== "select") return;
 
-  const newSelecteds = new Set(hand.selecteds);
-  if (hand.selecteds.has(uuid as any)) {
-    newSelecteds.delete(uuid as any);
+  const newSelecteds = [...hand.selecteds];
+  if (hand.selecteds.includes(uuid)) {
+    newSelecteds.splice(newSelecteds.indexOf(uuid), 1);
   } else {
-    newSelecteds.add(uuid as any);
+    newSelecteds.push(uuid);
   }
   setHand({ selecteds: newSelecteds });
 };
 
-export const selectSingle = (uuid: `${string}-${string}-${string}-${string}-${string}`) => {
+export const selectSingle = (uuid: Uuid) => {
   const [hand, setHand] = handStore;
   if (hand.mode !== "select") return;
 
-  setHand({ selecteds: new Set([uuid]) });
+  setHand({ selecteds: [uuid] });
 };
