@@ -4,7 +4,7 @@ export const useClick = () => {
   const [isDown, setIsDown] = createSignal(false);
   const [lastReleasedAt, setLastReleasedAt] = createSignal(0);
 
-  const handleMousedown = (e: MouseEvent) => {
+  const handleMousedown = () => {
     setIsDown(true);
   };
 
@@ -14,8 +14,8 @@ export const useClick = () => {
   };
 
   onMount(() => {
-    window.addEventListener("mousedown", handleMousedown);
-    window.addEventListener("mouseup", handleMouseup);
+    window.addEventListener("mousedown", handleMousedown, { capture: true });
+    window.addEventListener("mouseup", handleMouseup, { capture: true });
     onCleanup(() => {
       window.removeEventListener("mousedown", handleMousedown);
       window.removeEventListener("mouseup", handleMouseup);

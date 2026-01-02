@@ -17,7 +17,7 @@ export const useCursorPos = () => {
       setPos(asScreenPos({ x: e.clientX, y: e.clientY }));
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { capture: true });
     onCleanup(() => {
       window.removeEventListener("mousemove", handleMouseMove);
     });

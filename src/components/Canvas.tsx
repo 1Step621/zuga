@@ -1,4 +1,12 @@
-import { createMemo, createSignal, For, Show, Index, onMount } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  For,
+  Show,
+  Index,
+  onMount,
+  JSX,
+} from "solid-js";
 import { useDrag } from "~/composables/useDrag";
 import { useSnappedCursorPos } from "~/composables/useSnappedCursorPos";
 import { useWindowSize } from "~/composables/useWindowSize";
@@ -67,6 +75,15 @@ export default function Canvas() {
       camera,
       windowSize()
     );
+
+  const cursorStyle = createMemo((): JSX.CSSProperties["cursor"] => {
+    if (hand.mode === "draw") {
+      return "crosshair";
+    } else if (hand.mode === "select") {
+      return isDown() ? "grabbing" : "grab";
+    }
+    return "default";
+  });
 
   const currentContent = () => {
     if (hand.mode !== "draw") return null;
@@ -313,7 +330,7 @@ export default function Canvas() {
       <svg
         class="select-none"
         style={{
-          cursor: isDown() ? "grabbing" : "grab",
+          cursor: cursorStyle(),
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
@@ -383,7 +400,7 @@ export default function Canvas() {
                       : "var(--color-cyan-700)"
                   }
                   stroke-width={2 / camera.scale}
-                  onMouseDown={(e) => handleItemMousedown(e, content.uuid)}
+                  on:mousedown={(e) => handleItemMousedown(e, content.uuid)}
                 />
               </Show>
             )}

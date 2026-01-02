@@ -11,7 +11,7 @@ export const useHotkey = (
   };
 
   onMount(() => {
-    window.addEventListener("keydown", handleKeydown);
+    window.addEventListener("keydown", handleKeydown, { capture: true });
 
     onCleanup(() => {
       window.removeEventListener("keydown", handleKeydown);

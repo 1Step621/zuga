@@ -15,7 +15,7 @@ export const useWindowSize = () => {
 
   onMount(() => {
     onResize();
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize, { capture: true });
     onCleanup(() => {
       window.removeEventListener("resize", onResize);
     });
