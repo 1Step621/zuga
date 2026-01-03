@@ -1,30 +1,18 @@
 import { contentsStore } from "~/stores/contentsStore";
-import { asWorldPos, DeltaPos, WorldPos } from "~/utilities/pos";
+import { WorldPos } from "~/utilities/pos";
 import { Uuid } from "~/utilities/uuid";
 
-export const updateContentPoints = (
-  uuid: Uuid,
-  originalPoints: WorldPos[],
-  delta: DeltaPos,
-  cameraScale: number
-) => {
+export const updateContentPoints = (uuid: Uuid, updatedPoints: WorldPos[]) => {
   const [contents, setContents] = contentsStore;
   const content = contents.contents[uuid];
   if (!content) return;
-
-  const points = originalPoints.map((pt) => {
-    return asWorldPos({
-      x: pt.x + delta.x / cameraScale,
-      y: pt.y + delta.y / cameraScale,
-    });
-  });
 
   setContents({
     contents: {
       ...contents.contents,
       [uuid]: {
         ...content,
-        points,
+        points: updatedPoints,
       },
     },
   });
@@ -33,9 +21,7 @@ export const updateContentPoints = (
 export const updatePointPosition = (
   uuid: Uuid,
   pointIndex: number,
-  originalPoint: WorldPos,
-  delta: DeltaPos,
-  cameraScale: number
+  to: WorldPos
 ) => {
   const [contents, setContents] = contentsStore;
   const content = contents.contents[uuid];
@@ -44,10 +30,7 @@ export const updatePointPosition = (
   const points = [...content.points];
   if (!points[pointIndex]) return;
 
-  points[pointIndex] = asWorldPos({
-    x: originalPoint.x + delta.x / cameraScale,
-    y: originalPoint.y + delta.y / cameraScale,
-  });
+  points[pointIndex] = to;
 
   setContents({
     contents: {

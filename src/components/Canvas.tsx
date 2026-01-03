@@ -6,9 +6,10 @@ import {
   Index,
   onMount,
   JSX,
+  batch,
+  createEffect,
 } from "solid-js";
 import { useDrag } from "~/composables/useDrag";
-import { useSnappedCursorPos } from "~/composables/useSnappedCursorPos";
 import { useWindowSize } from "~/composables/useWindowSize";
 import {
   addPoint,
@@ -28,7 +29,7 @@ import { contentsStore } from "~/stores/contentsStore";
 import { handStore } from "~/stores/handStore";
 import { isSatisfied } from "~/utilities/constraint";
 import { screenToWorld, worldToScreen } from "~/utilities/coordinate";
-import { asScreenPos, asWorldPos, WorldPos } from "~/utilities/pos";
+import { asScreenPos, asWorldPos, ScreenPos, WorldPos } from "~/utilities/pos";
 import { Svg } from "~/logic/meta/svgs";
 import { requiredPoints } from "~/logic/meta/requiredPoints";
 import { defaultProps } from "~/logic/meta/props";
@@ -47,16 +48,25 @@ import { updateContentPoints, updatePointPosition } from "~/logic/transform";
 import { Uuid } from "~/utilities/uuid";
 import { Kind } from "~/logic/kind";
 import { useClick } from "~/composables/useClick";
+import { useSnap } from "~/composables/useSnap";
+import { SnapLine } from "~/logic/snapLine";
+import LineGuide from "./LineGuide";
 
 export default function Canvas() {
   const [hand, setHand] = handStore;
   const [contents, setContents] = contentsStore;
   const [camera, setCamera] = cameraStore;
   const { isDown, lastReleasedAt } = useClick();
+  const snap = useSnap();
   const windowSize = useWindowSize();
-  const snappedCursorPos = useSnappedCursorPos();
   const cursorPos = useCursorPos();
   const sampledWorldCursorPos = useSampled(cursorPos.world, 100);
+  const cursorSnap = createMemo(() => snap(cursorPos.world()));
+  const [currentSnap, setCurrrentSnap] = createSignal<{
+    targetLines: { x: SnapLine | null; y: SnapLine | null };
+    world: WorldPos;
+    screen: ScreenPos;
+  } | null>(null);
 
   const gridSize = createMemo(() => ({
     width: 30 * camera.scale,
@@ -92,7 +102,7 @@ export default function Canvas() {
     return {
       uuid: "preview-preview-preview-preview-preview",
       kind: hand.kind,
-      points: [...hand.points, snappedCursorPos.world()],
+      points: [...hand.points, cursorSnap().world],
       props: defaultProps[hand.kind],
     } as Content<typeof hand.kind>;
   };
@@ -164,18 +174,62 @@ export default function Canvas() {
     },
     onMove: (delta) => {
       if (hand.mode !== "select") return;
-      for (const original of itemDragOriginals()) {
-        updateContentPoints(
-          original.uuid,
-          original.points,
-          delta,
-          camera.scale
+      batch(() => {
+        const originals = itemDragOriginals();
+        const allPoints: WorldPos[] = [];
+        originals.forEach((original) => {
+          original.points.forEach((pt) => {
+            allPoints.push(pt);
+          });
+        });
+        const snappeds = allPoints.map((pt) =>
+          snap(
+            asWorldPos({
+              x: pt.x + delta.x / camera.scale,
+              y: pt.y + delta.y / camera.scale,
+            }),
+            hand.selecteds
+          )
         );
-      }
+        let closestDelta: { x: number; y: number } = { x: delta.x, y: delta.y };
+        let closestDist = Infinity;
+        snappeds.forEach((snapped, index) => {
+          const originalPoint = allPoints[index];
+          const dist = Math.hypot(
+            snapped.world.x - (originalPoint.x + delta.x / camera.scale),
+            snapped.world.y - (originalPoint.y + delta.y / camera.scale)
+          );
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestDelta = {
+              x: snapped.world.x - originalPoint.x,
+              y: snapped.world.y - originalPoint.y,
+            };
+            setCurrrentSnap(snapped);
+          }
+        });
+
+        originals.forEach((original) => {
+          const updatedPoints = original.points.map((pt) =>
+            asWorldPos({
+              x: pt.x + closestDelta.x,
+              y: pt.y + closestDelta.y,
+            })
+          );
+          updateContentPoints(original.uuid, updatedPoints);
+        });
+      });
     },
     onEnd: () => {
-      setItemDragOriginals([]);
+      batch(() => {
+        setItemDragOriginals([]);
+        setCurrrentSnap(null);
+      });
     },
+  });
+
+  createEffect(() => {
+    console.log(currentSnap());
   });
 
   const [pointDragOriginal, setPointDragOriginal] =
@@ -194,20 +248,27 @@ export default function Canvas() {
     onMove: (delta) => {
       if (hand.mode !== "select") return;
       if (hand.selecteds.length !== 1) return;
-      const index = pointDragIndex();
-      if (index === null) return;
-      const original = pointDragOriginal();
-      if (!original) return;
-      updatePointPosition(
-        hand.selecteds[0],
-        index,
-        original,
-        delta,
-        camera.scale
-      );
+      batch(() => {
+        const index = pointDragIndex();
+        if (index === null) return;
+        const original = pointDragOriginal();
+        if (!original) return;
+        const to = snap(
+          asWorldPos({
+            x: original.x + delta.x / camera.scale,
+            y: original.y + delta.y / camera.scale,
+          }),
+          hand.selecteds
+        );
+        setCurrrentSnap(to);
+        updatePointPosition(hand.selecteds[0], index, to.world);
+      });
     },
     onEnd: () => {
-      setPointDragIndex(null);
+      batch(() => {
+        setPointDragIndex(null);
+        setCurrrentSnap(null);
+      });
     },
   });
 
@@ -230,12 +291,12 @@ export default function Canvas() {
             // double click at the same position
             performance.now() - lastReleasedAt() < 300 &&
             hand.points.length > 0 &&
-            hand.points.at(-1)?.x === snappedCursorPos.world().x &&
-            hand.points.at(-1)?.y === snappedCursorPos.world().y
+            hand.points.at(-1)?.x === cursorSnap().world.x &&
+            hand.points.at(-1)?.y === cursorSnap().world.y
           ) {
             finishIfPossible();
           } else {
-            addPoint(snappedCursorPos.world());
+            addPoint(cursorSnap().world);
             finishIfRequired();
           }
           return;
@@ -256,7 +317,7 @@ export default function Canvas() {
 
   const handleMouseup = () => {
     if (hand.mode !== "draw") return;
-    finishIfPossible(snappedCursorPos.world());
+    finishIfPossible(cursorSnap().world);
   };
 
   const handleWheel = (e: WheelEvent) => {
@@ -394,61 +455,14 @@ export default function Canvas() {
           )}
         </For>
 
-        <Show when={snappedCursorPos.targetLine().x}>
-          {(line) => (
-            <For each={line().anchors && line().anchors}>
-              {(anchor) => (
-                <>
-                  <circle
-                    cx={anchor.x}
-                    cy={anchor.y}
-                    r={3 / camera.scale}
-                    fill="var(--color-orange-400)"
-                  />
-                  <line
-                    x1={line().x}
-                    y1={northWest().y}
-                    x2={line().x}
-                    y2={southEast().y}
-                    stroke="var(--color-orange-400)"
-                    stroke-width={1 / camera.scale}
-                    stroke-dasharray={`${10 / camera.scale} ${
-                      10 / camera.scale
-                    }`}
-                  />
-                </>
-              )}
-            </For>
-          )}
+        <Show when={hand.mode === "draw"}>
+          <LineGuide line={cursorSnap().targetLines.x} />
         </Show>
-
-        <Show when={snappedCursorPos.targetLine().y}>
-          {(line) => (
-            <For each={line().anchors && line().anchors}>
-              {(anchor) => (
-                <>
-                  <circle
-                    cx={anchor.x}
-                    cy={anchor.y}
-                    r={3 / camera.scale}
-                    fill="var(--color-orange-400)"
-                  />
-                  <line
-                    x1={northWest().x}
-                    y1={line().y}
-                    x2={southEast().x}
-                    y2={line().y}
-                    stroke="var(--color-orange-400)"
-                    stroke-width={1 / camera.scale}
-                    stroke-dasharray={`${10 / camera.scale} ${
-                      10 / camera.scale
-                    }`}
-                  />
-                </>
-              )}
-            </For>
-          )}
+        <Show when={hand.mode === "draw"}>
+          <LineGuide line={cursorSnap().targetLines.y} />
         </Show>
+        <LineGuide line={currentSnap()?.targetLines.x || null} />
+        <LineGuide line={currentSnap()?.targetLines.y || null} />
 
         <For each={Object.values(contents.contents)}>
           {(content) => (
