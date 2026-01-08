@@ -180,6 +180,6 @@ export const defaultProps: { [K in Kind]: Props<K> } = {
     strokeWidth: 2,
   },
   math: {
-    content: "X"
-  }
+    content: "X",
+  },
 };

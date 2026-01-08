@@ -11,31 +11,35 @@ import { isCollidingResistor } from "./collisions/resistor";
 import { isCollidingGnd } from "./collisions/gnd";
 import { isCollidingSource } from "./collisions/source";
 
-const isCollidingGeneric = (points: WorldPos[], pos: WorldPos, strokeWidth: number): boolean => {
+const isCollidingGeneric = (
+  points: WorldPos[],
+  pos: WorldPos,
+  strokeWidth: number
+): boolean => {
   if (points.length < 2) return false;
   const threshold = strokeWidth / 2 + 10;
-  
+
   for (let i = 0; i < points.length - 1; i++) {
     const p1 = points[i];
     for (let j = i + 1; j < points.length; j++) {
-        const p2 = points[j];
-        const dx = p2.x - p1.x;
-        const dy = p2.y - p1.y;
-        const dpx = pos.x - p1.x;
-        const dpy = pos.y - p1.y;
-        const lenSq = dx * dx + dy * dy;
-        if (lenSq === 0) continue;
-        let t = (dpx * dx + dpy * dy) / lenSq;
-        t = Math.max(0, Math.min(1, t));
-        const nearestX = p1.x + t * dx;
-        const nearestY = p1.y + t * dy;
-        const distX = pos.x - nearestX;
-        const distY = pos.y - nearestY;
-        if (distX * distX + distY * distY <= threshold * threshold) return true;
+      const p2 = points[j];
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const dpx = pos.x - p1.x;
+      const dpy = pos.y - p1.y;
+      const lenSq = dx * dx + dy * dy;
+      if (lenSq === 0) continue;
+      let t = (dpx * dx + dpy * dy) / lenSq;
+      t = Math.max(0, Math.min(1, t));
+      const nearestX = p1.x + t * dx;
+      const nearestY = p1.y + t * dy;
+      const distX = pos.x - nearestX;
+      const distY = pos.y - nearestY;
+      if (distX * distX + distY * distY <= threshold * threshold) return true;
     }
   }
   return false;
-}
+};
 
 export const isColliding = (content: Content<Kind>, pos: WorldPos): boolean => {
   switch (content.kind) {
@@ -65,16 +69,16 @@ export const isColliding = (content: Content<Kind>, pos: WorldPos): boolean => {
       return isCollidingSource(content, pos);
     }
     case "ac_source": {
-        return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
+      return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
     }
     case "transistor": {
-        return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
+      return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
     }
     case "gate": {
-        return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
+      return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
     }
     case "diode": {
-        return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
+      return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
     }
     case "junction": {
       if (content.points.length < 1) return false;

@@ -5,7 +5,10 @@ export type Rect = {
   size: DeltaPos;
 };
 
-export const createRectFromTwoPoints = (pointA: NaivePos, pointB: NaivePos): Rect => {
+export const createRectFromTwoPoints = (
+  pointA: NaivePos,
+  pointB: NaivePos
+): Rect => {
   return {
     position: {
       x: pointA.x,

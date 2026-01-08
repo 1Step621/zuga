@@ -54,7 +54,7 @@ export type Prerendered<K extends Kind> = {
   };
   math: {
     position: WorldPos;
-  }
+  };
 }[K];
 
 export const prerenders: {
@@ -80,7 +80,7 @@ export const prerenders: {
       radius: {
         x: Math.abs(pt2.x - pt1.x) / 2,
         y: Math.abs(pt2.y - pt1.y) / 2,
-      }
+      },
     };
   },
   polygon: (points) => {
@@ -160,5 +160,5 @@ export const prerenders: {
     return {
       position: pt1,
     };
-  }
+  },
 };
