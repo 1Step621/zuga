@@ -10,6 +10,12 @@ export const names: Record<Kind, string> = {
   resistor: "抵抗",
   capacitor: "コンデンサ",
   inductor: "インダクタ",
-  source: "電源",
+  source: "直流電源",
+  ac_source: "交流電源",
+  vcc: "VCC",
   gnd: "GND",
+  transistor: "トランジスタ",
+  gate: "論理ゲート",
+  junction: "結合点",
+  diode: "ダイオード",
 };

@@ -2,7 +2,7 @@ import { JSX, Show } from "solid-js";
 import { Props } from "../props";
 import { WorldPos, asWorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
-import { getLabelPos, propsExcluded } from "./utils";
+import { propsExcluded } from "./utils";
 
 export const Source = (
   props: {
@@ -11,23 +11,6 @@ export const Source = (
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
   const shape = () => prerenders.source(props.points);
-  const labelPos = () => {
-    if (shape().points.length < 2)
-      return {
-        x: 0,
-        y: 0,
-        anchor: "middle" as const,
-        baseline: "middle" as const,
-      };
-    const p0 = shape().points[0];
-    const p1 = shape().points[1];
-    const cx = (p0.x + p1.x) / 2;
-    const cy = (p0.y + p1.y) / 2;
-    return getLabelPos(
-      { position: asWorldPos({ x: cx, y: cy }), size: { x: 0, y: 0 } },
-      props.props
-    );
-  };
 
   const renderComponent = () => {
     const points = shape().points;
@@ -72,18 +55,6 @@ export const Source = (
   return (
     <g {...propsExcluded(props)}>
       {renderComponent()}
-      <Show when={props.props.label}>
-        <text
-          x={labelPos().x}
-          y={labelPos().y}
-          fill={props.props.labelColor ?? "black"}
-          font-size={(props.props.labelSize ?? 16) + "px"}
-          text-anchor={labelPos().anchor}
-          dominant-baseline={labelPos().baseline}
-        >
-          {props.props.label}
-        </text>
-      </Show>
     </g>
   );
 };

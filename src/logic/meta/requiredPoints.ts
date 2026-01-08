@@ -12,5 +12,11 @@ export const requiredPoints: Record<Kind, Constraint> = {
   capacitor: { exact: 2 },
   inductor: { exact: 2 },
   source: { exact: 2 },
+  ac_source: { exact: 2 },
+  vcc: { exact: 2 },
   gnd: { exact: 2 },
+  transistor: { exact: 2 },
+  gate: { exact: 2 },
+  junction: { exact: 1 },
+  diode: { exact: 2 },
 };

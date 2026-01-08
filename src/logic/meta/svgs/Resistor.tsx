@@ -2,7 +2,7 @@ import { JSX, Show } from "solid-js";
 import { Props } from "../props";
 import { WorldPos, asWorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
-import { getLabelPos, propsExcluded } from "./utils";
+import { propsExcluded } from "./utils";
 
 export const Resistor = (
   props: {
@@ -11,23 +11,6 @@ export const Resistor = (
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
   const shape = () => prerenders.resistor(props.points);
-  const labelPos = () => {
-    if (shape().points.length < 2)
-      return {
-        x: 0,
-        y: 0,
-        anchor: "middle" as const,
-        baseline: "middle" as const,
-      };
-    const p0 = shape().points[0];
-    const p1 = shape().points[1];
-    const cx = (p0.x + p1.x) / 2;
-    const cy = (p0.y + p1.y) / 2;
-    return getLabelPos(
-      { position: asWorldPos({ x: cx, y: cy }), size: { x: 0, y: 0 } },
-      props.props
-    );
-  };
 
   const renderComponent = () => {
     const points = shape().points;
@@ -54,7 +37,7 @@ export const Resistor = (
       </g>
     );
 
-    const width = 40;
+    const width = 50;
     if (dist < width) {
       return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
     }
@@ -62,13 +45,21 @@ export const Resistor = (
     return ComponentGroup(
       <>
         <line x1="0" y1="0" x2={margin} y2="0" />
-        <polyline
-          points={`${margin},0 ${margin + 2.5},-10 ${margin + 7.5},10 ${
-            margin + 12.5
-          },-10 ${margin + 17.5},10 ${margin + 22.5},-10 ${margin + 27.5},10 ${
-            margin + 32.5
-          },-10 ${margin + 37.5},10 ${margin + 40},0`}
+        <rect
+          x={margin}
+          y="-10"
+          width={width}
+          height="20"
+          fill="none"
+          stroke={color}
+          stroke-width={strokeWidth}
         />
+        <Show when={props.props.variable}>
+          <g transform={`translate(${margin + width / 2}, 0) rotate(45)`}>
+            <line x1="-25" y1="0" x2="25" y2="0" />
+            <polyline points="15,-5 25,0 15,5" />
+          </g>
+        </Show>
         <line x1={margin + width} y1="0" x2={dist} y2="0" />
       </>
     );
@@ -77,18 +68,6 @@ export const Resistor = (
   return (
     <g {...propsExcluded(props)}>
       {renderComponent()}
-      <Show when={props.props.label}>
-        <text
-          x={labelPos().x}
-          y={labelPos().y}
-          fill={props.props.labelColor ?? "black"}
-          font-size={(props.props.labelSize ?? 16) + "px"}
-          text-anchor={labelPos().anchor}
-          dominant-baseline={labelPos().baseline}
-        >
-          {props.props.label}
-        </text>
-      </Show>
     </g>
   );
 };

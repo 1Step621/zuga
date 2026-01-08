@@ -9,7 +9,13 @@ export type Kind =
   | "capacitor"
   | "inductor"
   | "source"
-  | "gnd";
+  | "ac_source"
+  | "vcc"
+  | "gnd"
+  | "transistor"
+  | "gate"
+  | "junction"
+  | "diode";
 export const kinds: Kind[] = [
   "rectangle",
   "ellipse",
@@ -20,7 +26,12 @@ export const kinds: Kind[] = [
   "resistor",
   "capacitor",
   "inductor",
+  "diode",
   "source",
+  "ac_source",
+  "vcc",
   "gnd",
+  "transistor",
+  "gate",
+  "junction",
 ];
-

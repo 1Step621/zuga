@@ -40,7 +40,68 @@ export const anchors = (content: Content<Kind>): WorldPos[] => {
     case "gnd": {
       return content.points;
     }
+    case "vcc": {
+      return content.points;
+    }
     case "source": {
+      return content.points;
+    }
+    case "ac_source": {
+      return content.points;
+    }
+    case "transistor": {
+      if (content.points.length < 2) return content.points;
+      const [p0, p1] = content.points;
+      const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
+      const dist = Math.max(Math.hypot(dx, dy), 40);
+      const angle = Math.atan2(dy, dx);
+      const cx = (p0.x + p1.x) / 2;
+      const cy = (p0.y + p1.y) / 2;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+
+      return [
+        asWorldPos({ x: cx + (dist / 2) * cos, y: cy + (dist / 2) * sin }),
+        asWorldPos({ x: cx - (dist / 2) * cos, y: cy - (dist / 2) * sin }),
+        asWorldPos({ x: cx + 50 * sin, y: cy - 50 * cos }),
+      ];
+    }
+    case "gate": {
+      if (content.points.length < 2) return content.points;
+      const [p0, p1] = content.points;
+      const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
+      const dist = Math.max(Math.hypot(dx, dy), 40);
+      const angle = Math.atan2(dy, dx);
+      const type = content.props.type;
+      const h = 30;
+
+      if (type === "not") {
+        return [p0, p1];
+      } else {
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
+        const cx = (p0.x + p1.x) / 2;
+        const cy = (p0.y + p1.y) / 2;
+
+        return [
+          asWorldPos({
+            x: cx + (-dist / 2) * cos - (-h / 4) * sin,
+            y: cy + (-dist / 2) * sin + (-h / 4) * cos,
+          }),
+          asWorldPos({
+            x: cx + (-dist / 2) * cos - (h / 4) * sin,
+            y: cy + (-dist / 2) * sin + (h / 4) * cos,
+          }),
+          p1,
+        ];
+      }
+    }
+    case "junction": {
+      return content.points;
+    }
+    case "diode": {
       return content.points;
     }
     default: {

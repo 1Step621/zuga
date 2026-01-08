@@ -4,13 +4,13 @@ import { WorldPos, asWorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
 import { propsExcluded } from "./utils";
 
-export const Inductor = (
+export const AcSource = (
   props: {
     points: WorldPos[];
-    props: Props<"inductor">;
+    props: Props<"ac_source">;
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
-  const shape = () => prerenders.inductor(props.points);
+  const shape = () => prerenders.ac_source(props.points);
 
   const renderComponent = () => {
     const points = shape().points;
@@ -26,35 +26,31 @@ export const Inductor = (
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
 
-    const ComponentGroup = (children: JSX.Element) => (
+    const radius = 20;
+    if (dist < radius * 2) {
+        return (
+            <g transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`} fill="none" stroke={color} stroke-width={strokeWidth}>
+                <line x1="0" y1="0" x2={dist} y2="0" />
+            </g>
+        );
+    }
+
+    const margin = (dist - radius * 2) / 2;
+
+    return (
       <g
         transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`}
         fill="none"
         stroke={color}
         stroke-width={strokeWidth}
       >
-        {children}
+        <line x1="0" y1="0" x2={margin} y2="0" />
+        <circle cx={margin + radius} cy="0" r={radius} />
+        <g transform={`translate(${margin + radius}, 0) rotate(${-deg})`}>
+          <path d={`M -10 0 Q -5 -10 0 0 T 10 0`} />
+        </g>
+        <line x1={margin + radius * 2} y1="0" x2={dist} y2="0" />
       </g>
-    );
-
-    const lWidth = 64;
-    if (dist < lWidth) {
-      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
-    }
-    const lMargin = (dist - lWidth) / 2;
-    return ComponentGroup(
-      <>
-        <line x1="0" y1="0" x2={lMargin} y2="0" />
-        <path
-          d={`M ${lMargin} 0
-             A 8 8 0 0 1 ${lMargin + 16} 0
-             A 8 8 0 0 1 ${lMargin + 32} 0
-             A 8 8 0 0 1 ${lMargin + 48} 0
-             A 8 8 0 0 1 ${lMargin + 64} 0`}
-          fill="none"
-        />
-        <line x1={lMargin + lWidth} y1="0" x2={dist} y2="0" />
-      </>
     );
   };
 

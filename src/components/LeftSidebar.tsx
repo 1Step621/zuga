@@ -2,6 +2,7 @@ import { thumbnails } from "~/logic/meta/thumbnails";
 import { handStore } from "~/stores/handStore";
 import { Kind, kinds } from "~/logic/kind";
 import { createSignal, For, JSX, Match, Show, Switch } from "solid-js";
+import { A } from "@solidjs/router";
 import {
   TbDownload,
   TbHandMove,
@@ -53,11 +54,15 @@ export default function Sidebar() {
           hand.mode === "draw" && hand.kind === props.kind
             ? "bg-cyan-800 hover:bg-cyan-700 active:bg-cyan-600 text-white"
             : "bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white"
-        } flex flex-row items-center gap-3`}
+        } flex flex-row items-center gap-3 overflow-hidden`}
         onClick={() => setHand({ ...defaultHand("draw"), kind: props.kind })}
       >
-        {thumbnails[props.kind]}
-        {names[props.kind]}
+        <div class="shrink-0">
+          {thumbnails(props.kind)}
+        </div>
+        <span class="truncate text-left flex-1">
+          {names[props.kind]}
+        </span>
       </button>
     );
   };
@@ -240,6 +245,12 @@ export default function Sidebar() {
           <input type="file" accept=".svg" class="hidden" onChange={load} />
           <TbUpload /> よみこみ
         </label>
+        <A
+          href="/about"
+          class="p-2 rounded-md bg-slate-200 hover:bg-slate-300 active:bg-slate-400 active:text-white transition-colors flex flex-row items-center gap-2"
+        >
+          <TbInfoCircle /> Zugaについて
+        </A>
       </div>
 
       <Portal mount={document.body}>

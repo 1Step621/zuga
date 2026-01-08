@@ -14,7 +14,13 @@ import { Resistor } from "./svgs/Resistor";
 import { Capacitor } from "./svgs/Capacitor";
 import { Inductor } from "./svgs/Inductor";
 import { Source } from "./svgs/Source";
+import { AcSource } from "./svgs/AcSource";
+import { Vcc } from "./svgs/Vcc";
 import { Gnd } from "./svgs/Gnd";
+import { Transistor } from "./svgs/Transistor";
+import { Gate } from "./svgs/Gate";
+import { Junction } from "./svgs/Junction";
+import { Diode } from "./svgs/Diode";
 
 export const svgs: {
   [K in Kind]: (
@@ -34,7 +40,13 @@ export const svgs: {
   capacitor: Capacitor,
   inductor: Inductor,
   source: Source,
+  ac_source: AcSource,
+  vcc: Vcc,
   gnd: Gnd,
+  transistor: Transistor,
+  gate: Gate,
+  junction: Junction,
+  diode: Diode,
 };
 
 const contentExcluded = <K extends Kind>(

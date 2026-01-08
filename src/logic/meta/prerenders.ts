@@ -31,7 +31,25 @@ export type Prerendered<K extends Kind> = {
   source: {
     points: WorldPos[];
   };
+  ac_source: {
+    points: WorldPos[];
+  };
+  vcc: {
+    points: WorldPos[];
+  };
   gnd: {
+    points: WorldPos[];
+  };
+  transistor: {
+    points: WorldPos[];
+  };
+  gate: {
+    points: WorldPos[];
+  };
+  junction: {
+    position: WorldPos;
+  };
+  diode: {
     points: WorldPos[];
   };
   math: {
@@ -101,7 +119,38 @@ export const prerenders: {
       points: points,
     };
   },
+  ac_source: (points) => {
+    return {
+      points: points,
+    };
+  },
+  vcc: (points) => {
+    return {
+      points: points,
+    };
+  },
   gnd: (points) => {
+    return {
+      points: points,
+    };
+  },
+  transistor: (points) => {
+    return {
+      points: points,
+    };
+  },
+  gate: (points) => {
+    return {
+      points: points,
+    };
+  },
+  junction: (points) => {
+    const [pt1] = points;
+    return {
+      position: pt1,
+    };
+  },
+  diode: (points) => {
     return {
       points: points,
     };

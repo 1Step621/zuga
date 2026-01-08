@@ -6,12 +6,13 @@ import { Kind } from "../../kind";
 
 export const getLabelPos = (
   shape: { position: WorldPos; size: { x: number; y: number } },
-  props: { labelPlacement?: string }
+  props: { labelPlacement?: string },
+  extraPadding: number = 0
 ) => {
   const p = props.labelPlacement ?? "center";
   const cx = shape.position.x + shape.size.x / 2;
   const cy = shape.position.y + shape.size.y / 2;
-  const padding = 5;
+  const padding = 5 + extraPadding;
   switch (p) {
     case "top":
       return {

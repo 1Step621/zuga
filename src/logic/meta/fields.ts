@@ -207,31 +207,9 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       type: "length",
     },
     {
-      key: "label",
-      name: "ラベル",
-      type: "text",
-    },
-    {
-      key: "labelColor",
-      name: "ラベルの色",
-      type: "color",
-    },
-    {
-      key: "labelSize",
-      name: "ラベルのサイズ",
-      type: "length",
-    },
-    {
-      key: "labelPlacement",
-      name: "ラベルの位置",
-      type: "select",
-      options: [
-        { label: "中央", value: "center" },
-        { label: "上", value: "top" },
-        { label: "下", value: "bottom" },
-        { label: "左", value: "left" },
-        { label: "右", value: "right" },
-      ],
+      key: "variable",
+      name: "可変抵抗",
+      type: "boolean",
     },
   ],
   capacitor: [
@@ -245,33 +223,6 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       name: "線の太さ",
       type: "length",
     },
-    {
-      key: "label",
-      name: "ラベル",
-      type: "text",
-    },
-    {
-      key: "labelColor",
-      name: "ラベルの色",
-      type: "color",
-    },
-    {
-      key: "labelSize",
-      name: "ラベルのサイズ",
-      type: "length",
-    },
-    {
-      key: "labelPlacement",
-      name: "ラベルの位置",
-      type: "select",
-      options: [
-        { label: "中央", value: "center" },
-        { label: "上", value: "top" },
-        { label: "下", value: "bottom" },
-        { label: "左", value: "left" },
-        { label: "右", value: "right" },
-      ],
-    },
   ],
   inductor: [
     {
@@ -283,33 +234,6 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       key: "strokeWidth",
       name: "線の太さ",
       type: "length",
-    },
-    {
-      key: "label",
-      name: "ラベル",
-      type: "text",
-    },
-    {
-      key: "labelColor",
-      name: "ラベルの色",
-      type: "color",
-    },
-    {
-      key: "labelSize",
-      name: "ラベルのサイズ",
-      type: "length",
-    },
-    {
-      key: "labelPlacement",
-      name: "ラベルの位置",
-      type: "select",
-      options: [
-        { label: "中央", value: "center" },
-        { label: "上", value: "top" },
-        { label: "下", value: "bottom" },
-        { label: "左", value: "left" },
-        { label: "右", value: "right" },
-      ],
     },
   ],
   source: [
@@ -323,31 +247,74 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       name: "線の太さ",
       type: "length",
     },
+  ],
+  ac_source: [
     {
-      key: "label",
-      name: "ラベル",
-      type: "text",
-    },
-    {
-      key: "labelColor",
-      name: "ラベルの色",
+      key: "color",
+      name: "色",
       type: "color",
     },
     {
-      key: "labelSize",
-      name: "ラベルのサイズ",
+      key: "strokeWidth",
+      name: "線の太さ",
+      type: "length",
+    },
+  ],
+  vcc: [
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "strokeWidth",
+      name: "線の太さ",
+      type: "length",
+    },
+  ],
+  transistor: [
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "strokeWidth",
+      name: "線の太さ",
       type: "length",
     },
     {
-      key: "labelPlacement",
-      name: "ラベルの位置",
+      key: "type",
+      name: "タイプ",
       type: "select",
       options: [
-        { label: "中央", value: "center" },
-        { label: "上", value: "top" },
-        { label: "下", value: "bottom" },
-        { label: "左", value: "left" },
-        { label: "右", value: "right" },
+        { label: "NPN", value: "npn" },
+        { label: "PNP", value: "pnp" },
+      ],
+    },
+  ],
+  gate: [
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "strokeWidth",
+      name: "線の太さ",
+      type: "length",
+    },
+    {
+      key: "type",
+      name: "タイプ",
+      type: "select",
+      options: [
+        { label: "AND", value: "and" },
+        { label: "OR", value: "or" },
+        { label: "NOT", value: "not" },
+        { label: "NAND", value: "nand" },
+        { label: "NOR", value: "nor" },
+        { label: "XOR", value: "xor" },
       ],
     },
   ],
@@ -362,32 +329,34 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       name: "線の太さ",
       type: "length",
     },
+  ],
+  diode: [
     {
-      key: "label",
-      name: "ラベル",
-      type: "text",
-    },
-    {
-      key: "labelColor",
-      name: "ラベルの色",
+      key: "color",
+      name: "色",
       type: "color",
     },
     {
-      key: "labelSize",
-      name: "ラベルのサイズ",
+      key: "strokeWidth",
+      name: "線の太さ",
+      type: "length",
+    },
+  ],
+  junction: [
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "strokeWidth",
+      name: "線の太さ",
       type: "length",
     },
     {
-      key: "labelPlacement",
-      name: "ラベルの位置",
-      type: "select",
-      options: [
-        { label: "中央", value: "center" },
-        { label: "上", value: "top" },
-        { label: "下", value: "bottom" },
-        { label: "左", value: "left" },
-        { label: "右", value: "right" },
-      ],
+      key: "fill",
+      name: "塗りつぶし",
+      type: "boolean",
     },
   ],
   text: [

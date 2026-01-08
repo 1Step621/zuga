@@ -33,42 +33,50 @@ export type Props<K extends Kind> = {
   resistor: {
     color: string;
     strokeWidth: number;
-    label?: string;
-    labelColor?: string;
-    labelSize?: number;
-    labelPlacement?: "center" | "top" | "bottom" | "left" | "right";
+    variable?: boolean;
   };
   capacitor: {
     color: string;
     strokeWidth: number;
-    label?: string;
-    labelColor?: string;
-    labelSize?: number;
-    labelPlacement?: "center" | "top" | "bottom" | "left" | "right";
   };
   inductor: {
     color: string;
     strokeWidth: number;
-    label?: string;
-    labelColor?: string;
-    labelSize?: number;
-    labelPlacement?: "center" | "top" | "bottom" | "left" | "right";
   };
   source: {
     color: string;
     strokeWidth: number;
-    label?: string;
-    labelColor?: string;
-    labelSize?: number;
-    labelPlacement?: "center" | "top" | "bottom" | "left" | "right";
+  };
+  ac_source: {
+    color: string;
+    strokeWidth: number;
+  };
+  vcc: {
+    color: string;
+    strokeWidth: number;
   };
   gnd: {
     color: string;
     strokeWidth: number;
-    label?: string;
-    labelColor?: string;
-    labelSize?: number;
-    labelPlacement?: "center" | "top" | "bottom" | "left" | "right";
+  };
+  transistor: {
+    color: string;
+    strokeWidth: number;
+    type: "npn" | "pnp";
+  };
+  gate: {
+    color: string;
+    strokeWidth: number;
+    type: "and" | "or" | "not" | "nand" | "nor" | "xor";
+  };
+  junction: {
+    color: string;
+    strokeWidth: number;
+    fill: boolean;
+  };
+  diode: {
+    color: string;
+    strokeWidth: number;
   };
   math: {
     content: string;
@@ -126,42 +134,50 @@ export const defaultProps: { [K in Kind]: Props<K> } = {
   resistor: {
     color: "#000000",
     strokeWidth: 2,
-    label: "",
-    labelColor: "#000000",
-    labelSize: 16,
-    labelPlacement: "top",
+    variable: false,
   },
   capacitor: {
     color: "#000000",
     strokeWidth: 2,
-    label: "",
-    labelColor: "#000000",
-    labelSize: 16,
-    labelPlacement: "top",
   },
   inductor: {
     color: "#000000",
     strokeWidth: 2,
-    label: "",
-    labelColor: "#000000",
-    labelSize: 16,
-    labelPlacement: "top",
   },
   source: {
     color: "#000000",
     strokeWidth: 2,
-    label: "",
-    labelColor: "#000000",
-    labelSize: 16,
-    labelPlacement: "top",
+  },
+  ac_source: {
+    color: "#000000",
+    strokeWidth: 2,
+  },
+  vcc: {
+    color: "#000000",
+    strokeWidth: 2,
   },
   gnd: {
     color: "#000000",
     strokeWidth: 2,
-    label: "",
-    labelColor: "#000000",
-    labelSize: 16,
-    labelPlacement: "top",
+  },
+  transistor: {
+    color: "#000000",
+    strokeWidth: 2,
+    type: "npn",
+  },
+  gate: {
+    color: "#000000",
+    strokeWidth: 2,
+    type: "and",
+  },
+  junction: {
+    color: "#000000",
+    strokeWidth: 2,
+    fill: true,
+  },
+  diode: {
+    color: "#000000",
+    strokeWidth: 2,
   },
   math: {
     content: "X"
