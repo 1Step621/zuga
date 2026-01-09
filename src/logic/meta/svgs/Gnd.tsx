@@ -25,6 +25,7 @@ export const Gnd = (
 
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
+    const leadStrokeWidth = props.props.leadStrokeWidth;
 
     const ComponentGroup = (children: JSX.Element) => (
       <g
@@ -39,7 +40,7 @@ export const Gnd = (
 
     return ComponentGroup(
       <>
-        <line x1="0" y1="0" x2={dist} y2="0" />
+        <line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
         <line x1={dist} y1="-15" x2={dist} y2="15" />
         <line x1={dist + 5} y1="-10" x2={dist + 5} y2="10" />
         <line x1={dist + 10} y1="-5" x2={dist + 10} y2="5" />

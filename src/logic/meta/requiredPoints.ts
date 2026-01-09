@@ -19,4 +19,5 @@ export const requiredPoints: Record<Kind, Constraint> = {
   gate: { exact: 2 },
   junction: { exact: 1 },
   diode: { exact: 2 },
+  op_amp: { exact: 2 },
 };

@@ -203,7 +203,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
     {
@@ -220,7 +225,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -232,7 +242,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -244,7 +259,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -256,7 +276,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -268,7 +293,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -280,7 +310,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
     {
@@ -301,7 +336,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
     {
@@ -326,7 +366,12 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -338,7 +383,34 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
     },
     {
       key: "strokeWidth",
-      name: "線の太さ",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
+      type: "length",
+    },
+    {
+      key: "led",
+      name: "発光ダイオード",
+      type: "boolean",
+    },
+  ],
+  op_amp: [
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "strokeWidth",
+      name: "素子の太さ",
+      type: "length",
+    },
+    {
+      key: "leadStrokeWidth",
+      name: "リード線の太さ",
       type: "length",
     },
   ],
@@ -375,12 +447,62 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       name: "色",
       type: "color",
     },
+    {
+      key: "align",
+      name: "文字揃え(横)",
+      type: "select",
+      options: [
+        { label: "左揃え", value: "start" },
+        { label: "中央揃え", value: "middle" },
+        { label: "右揃え", value: "end" },
+      ],
+    },
+    {
+      key: "verticalAlign",
+      name: "文字揃え(縦)",
+      type: "select",
+      options: [
+        { label: "上揃え", value: "top" },
+        { label: "中央揃え", value: "middle" },
+        { label: "下揃え", value: "bottom" },
+      ],
+    },
   ],
   math: [
     {
       key: "content",
       name: "数式",
       type: "text",
+    },
+    {
+      key: "fontSize",
+      name: "フォントサイズ",
+      type: "length",
+    },
+    {
+      key: "color",
+      name: "色",
+      type: "color",
+    },
+    {
+      key: "align",
+      name: "文字揃え(横)",
+      type: "select",
+      options: [
+        { label: "左揃え", value: "start" },
+        { label: "中央揃え", value: "middle" },
+        { label: "右揃え", value: "end" },
+      ],
+    },
+    {
+      key: "verticalAlign",
+      name: "文字揃え(縦)",
+      type: "select",
+      options: [
+        { label: "上揃え", value: "top" },
+        { label: "中央揃え", value: "middle" },
+        { label: "下揃え", value: "bottom" },
+      ],
     },
   ],
 };

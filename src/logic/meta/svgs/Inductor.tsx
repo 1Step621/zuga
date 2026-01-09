@@ -37,14 +37,16 @@ export const Inductor = (
       </g>
     );
 
+    const leadStrokeWidth = props.props.leadStrokeWidth;
+
     const lWidth = 64;
     if (dist < lWidth) {
-      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
+      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />);
     }
     const lMargin = (dist - lWidth) / 2;
     return ComponentGroup(
       <>
-        <line x1="0" y1="0" x2={lMargin} y2="0" />
+        <line x1="0" y1="0" x2={lMargin} y2="0" stroke-width={leadStrokeWidth} />
         <path
           d={`M ${lMargin} 0
              A 8 8 0 0 1 ${lMargin + 16} 0
@@ -52,8 +54,9 @@ export const Inductor = (
              A 8 8 0 0 1 ${lMargin + 48} 0
              A 8 8 0 0 1 ${lMargin + 64} 0`}
           fill="none"
+          stroke-width={strokeWidth}
         />
-        <line x1={lMargin + lWidth} y1="0" x2={dist} y2="0" />
+        <line x1={lMargin + lWidth} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
       </>
     );
   };

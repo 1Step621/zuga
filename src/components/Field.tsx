@@ -35,12 +35,22 @@ export default function Field(props: {
             />
           </Match>
           <Match when={props.field.type === "boolean"}>
-            <input
-              type="checkbox"
-              checked={props.value}
-              onChange={(e) => props.onChange(e.currentTarget.checked)}
-              class="border border-slate-300 rounded px-2 py-1"
-            />
+            <div
+              onClick={() => props.onChange(!props.value)}
+              class="relative inline-flex items-center cursor-pointer group"
+            >
+              <div
+                class={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${
+                  props.value ? "bg-blue-500" : "bg-slate-200"
+                }`}
+              >
+                <div
+                  class={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                    props.value ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </div>
+            </div>
           </Match>
           <Match when={props.field.type === "select"}>
             <select

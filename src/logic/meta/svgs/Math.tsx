@@ -23,7 +23,10 @@ export const MathShape = (
         output: "html",
         displayMode: true,
       })}
-      style={{ color: "black" }}
+      style={{
+        color: props.props.color,
+        "font-size": `${props.props.fontSize}px`,
+      }}
     ></div>
   );
   const getRect = (component: JSX.Element): Rect => {
@@ -42,11 +45,36 @@ export const MathShape = (
   };
   const rect = () => getRect(rendered());
 
+  const x = () => {
+    switch (props.props.align) {
+      case "start":
+        return shape().position.x;
+      case "middle":
+        return shape().position.x - rect().size.x / 2;
+      case "end":
+        return shape().position.x - rect().size.x;
+    }
+  };
+
+  const y = () => {
+    switch (props.props.verticalAlign) {
+      case "top":
+        return shape().position.y;
+      case "middle":
+        return shape().position.y - rect().size.y / 2;
+      case "bottom":
+        return shape().position.y - rect().size.y;
+    }
+  };
+
   return (
-    <g {...propsExcluded(props)}>
+    <g
+      {...propsExcluded(props)}
+      transform-origin={`${shape().position.x} ${shape().position.y}`}
+    >
       <foreignObject
-        x={shape().position.x - rect().size.x / 2}
-        y={shape().position.y - rect().size.y / 2}
+        x={x()}
+        y={y()}
         width={rect().size.x}
         height={rect().size.y}
       >

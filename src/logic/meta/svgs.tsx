@@ -21,6 +21,7 @@ import { Transistor } from "./svgs/Transistor";
 import { Gate } from "./svgs/Gate";
 import { Junction } from "./svgs/Junction";
 import { Diode } from "./svgs/Diode";
+import { OpAmp } from "./svgs/OpAmp";
 
 export const svgs: {
   [K in Kind]: (
@@ -47,6 +48,7 @@ export const svgs: {
   gate: Gate,
   junction: Junction,
   diode: Diode,
+  op_amp: OpAmp,
 };
 
 const contentExcluded = <K extends Kind>(

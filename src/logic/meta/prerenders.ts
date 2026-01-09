@@ -52,6 +52,9 @@ export type Prerendered<K extends Kind> = {
   diode: {
     points: WorldPos[];
   };
+  op_amp: {
+    points: WorldPos[];
+  };
   math: {
     position: WorldPos;
   };
@@ -151,6 +154,11 @@ export const prerenders: {
     };
   },
   diode: (points) => {
+    return {
+      points: points,
+    };
+  },
+  op_amp: (points) => {
     return {
       points: points,
     };

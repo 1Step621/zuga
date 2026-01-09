@@ -15,7 +15,8 @@ export type Kind =
   | "transistor"
   | "gate"
   | "junction"
-  | "diode";
+  | "diode"
+  | "op_amp";
 export const kinds: Kind[] = [
   "rectangle",
   "ellipse",
@@ -27,6 +28,7 @@ export const kinds: Kind[] = [
   "capacitor",
   "inductor",
   "diode",
+  "op_amp",
   "source",
   "ac_source",
   "vcc",

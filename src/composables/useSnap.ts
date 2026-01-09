@@ -6,13 +6,22 @@ import { anchors } from "~/logic/meta/anchors";
 import { asWorldPos, WorldPos } from "~/utilities/pos";
 import { Uuid } from "~/utilities/uuid";
 import { SnapLine } from "~/logic/snapLine";
+import { keyboardStore } from "~/stores/keyboardStore";
 
 export const useSnap = () => {
   const windowSize = useWindowSize();
   const [camera] = cameraStore;
   const [contents] = contentsStore;
+  const [keys] = keyboardStore;
 
   const snap = (pos: WorldPos, ignores?: Uuid[]) => {
+    if (keys.shift) {
+      return {
+        targetLines: { x: null, y: null },
+        world: pos,
+        screen: worldToScreen(pos, camera, windowSize()),
+      };
+    }
     const everyAnchors = Object.values(contents.contents)
       .filter((content) => !ignores?.includes(content.uuid))
       .flatMap((content) => anchors(content));

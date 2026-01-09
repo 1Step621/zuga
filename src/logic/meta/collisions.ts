@@ -80,6 +80,9 @@ export const isColliding = (content: Content<Kind>, pos: WorldPos): boolean => {
     case "diode": {
       return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
     }
+    case "op_amp": {
+      return isCollidingGeneric(content.points, pos, content.props.strokeWidth);
+    }
     case "junction": {
       if (content.points.length < 1) return false;
       const [p1] = content.points;

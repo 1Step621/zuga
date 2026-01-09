@@ -25,6 +25,7 @@ export const Vcc = (
 
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
+    const leadStrokeWidth = props.props.leadStrokeWidth;
 
     return (
       <g
@@ -33,7 +34,7 @@ export const Vcc = (
         stroke={color}
         stroke-width={strokeWidth}
       >
-        <line x1="0" y1="0" x2={dist} y2="0" />
+        <line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
         <line x1={dist} y1="-10" x2={dist} y2="10" />
       </g>
     );

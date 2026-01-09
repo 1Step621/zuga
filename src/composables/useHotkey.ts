@@ -7,6 +7,12 @@ export const useHotkey = (
 ) => {
   const handleKeydown = (e: KeyboardEvent) => {
     if (
+      document.activeElement?.tagName === "INPUT" ||
+      document.activeElement?.tagName === "TEXTAREA"
+    ) {
+      return;
+    }
+    if (
       e.key === key &&
       !!modifiers.alt === e.altKey &&
       !!modifiers.ctrl === e.ctrlKey

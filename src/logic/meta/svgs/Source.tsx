@@ -37,17 +37,19 @@ export const Source = (
       </g>
     );
 
+    const leadStrokeWidth = props.props.leadStrokeWidth;
+
     const sWidth = 10;
     if (dist < sWidth * 2) {
-      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
+      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />);
     }
     const sMargin = (dist - sWidth) / 2;
     return ComponentGroup(
       <>
-        <line x1="0" y1="0" x2={sMargin} y2="0" />
+        <line x1="0" y1="0" x2={sMargin} y2="0" stroke-width={leadStrokeWidth} />
         <line x1={sMargin} y1="-15" x2={sMargin} y2="15" />
         <line x1={sMargin + sWidth} y1="-7.5" x2={sMargin + sWidth} y2="7.5" />
-        <line x1={sMargin + sWidth} y1="0" x2={dist} y2="0" />
+        <line x1={sMargin + sWidth} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
       </>
     );
   };

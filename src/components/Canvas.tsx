@@ -44,7 +44,7 @@ import {
 } from "~/utilities/rect";
 import { isColliding } from "~/logic/meta/collisions";
 import { useSampled } from "~/composables/useDebounced";
-import { updateContentPoints, updatePointPosition } from "~/logic/transform";
+import { moveContents, updateContentPoints, updatePointPosition } from "~/logic/transform";
 import { Uuid } from "~/utilities/uuid";
 import { Kind } from "~/logic/kind";
 import { useClick } from "~/composables/useClick";
@@ -448,6 +448,25 @@ export default function Canvas() {
       setClipboard({ contents: [...Object.values(newContents)] });
     });
   });
+
+  let arrowMoveTimeout: any;
+  const moveByArrow = (dx: number, dy: number) => {
+    if (hand.mode !== "select" || hand.selecteds.length === 0) return;
+    moveContents(hand.selecteds, { x: dx, y: dy });
+
+    clearTimeout(arrowMoveTimeout);
+    arrowMoveTimeout = setTimeout(() => {
+      setContents({
+        history: [...contents.history, { ...contents.contents }],
+        undoHistory: [],
+      });
+    }, 500);
+  };
+
+  useHotkey("ArrowUp", {}, () => moveByArrow(0, -1));
+  useHotkey("ArrowDown", {}, () => moveByArrow(0, 1));
+  useHotkey("ArrowLeft", {}, () => moveByArrow(-1, 0));
+  useHotkey("ArrowRight", {}, () => moveByArrow(1, 0));
 
   const updateRect = (id: Uuid, el: SVGGraphicsElement) => {
     const bbox = el.getBBox();

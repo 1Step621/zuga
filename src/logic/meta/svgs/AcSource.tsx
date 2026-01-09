@@ -26,10 +26,12 @@ export const AcSource = (
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
 
+    const leadStrokeWidth = props.props.leadStrokeWidth;
+
     const radius = 20;
     if (dist < radius * 2) {
         return (
-            <g transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`} fill="none" stroke={color} stroke-width={strokeWidth}>
+            <g transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`} fill="none" stroke={color} stroke-width={leadStrokeWidth}>
                 <line x1="0" y1="0" x2={dist} y2="0" />
             </g>
         );
@@ -39,17 +41,17 @@ export const AcSource = (
 
     return (
       <g
-        transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`}
+        transform={`translate(${p0.x}, ${p0.y}) rotate(${deg}) scale(${props.props.flipX ? -1 : 1}, ${props.props.flipY ? -1 : 1})`}
         fill="none"
         stroke={color}
         stroke-width={strokeWidth}
       >
-        <line x1="0" y1="0" x2={margin} y2="0" />
+        <line x1="0" y1="0" x2={margin} y2="0" stroke-width={leadStrokeWidth} />
         <circle cx={margin + radius} cy="0" r={radius} />
         <g transform={`translate(${margin + radius}, 0) rotate(${-deg})`}>
           <path d={`M -10 0 Q -5 -10 0 0 T 10 0`} />
         </g>
-        <line x1={margin + radius * 2} y1="0" x2={dist} y2="0" />
+        <line x1={margin + radius * 2} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
       </g>
     );
   };

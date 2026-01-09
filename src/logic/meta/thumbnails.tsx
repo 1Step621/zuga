@@ -13,7 +13,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             height="24"
             fill="transparent"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -27,7 +27,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             ry="12"
             fill="transparent"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -38,7 +38,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             points="20,8 32,32 8,32"
             fill="transparent"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -51,7 +51,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="32"
             y2="8"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -64,7 +64,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="9"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <rect
             x="9"
@@ -73,7 +73,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             height="10"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="31"
@@ -81,7 +81,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="37.5"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -94,7 +94,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="15"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="15"
@@ -102,7 +102,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="15"
             y2="30"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="25"
@@ -110,7 +110,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="25"
             y2="30"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="25"
@@ -118,18 +118,34 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="35"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
     case "inductor":
       return (
         <svg width="40" height="40">
+          <line
+            x1="2"
+            y1="20"
+            x2="4"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
           <path
-            d="M 2 20 L 4 20 A 4 4 0 0 1 12 20 A 4 4 0 0 1 20 20 A 4 4 0 0 1 28 20 A 4 4 0 0 1 36 20 L 38 20"
+            d="M 4 20 A 4 4 0 0 1 12 20 A 4 4 0 0 1 20 20 A 4 4 0 0 1 28 20 A 4 4 0 0 1 36 20"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
+          />
+          <line
+            x1="36"
+            y1="20"
+            x2="38"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -142,7 +158,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="17"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="17"
@@ -150,7 +166,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="17"
             y2="30"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="23"
@@ -158,7 +174,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="23"
             y2="25"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="23"
@@ -166,26 +182,42 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="35"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
     case "ac_source":
       return (
         <svg width="40" height="40">
+          <line
+            x1="2"
+            y1="20"
+            x2="8"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
           <circle
             cx="20"
             cy="20"
             r="12"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <path
             d="M 12 20 Q 16 12 20 20 T 28 20"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
+          />
+          <line
+            x1="32"
+            y1="20"
+            x2="38"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -198,7 +230,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="20"
             y2="35"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="10"
@@ -206,7 +238,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="30"
             y2="10"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
         </svg>
       );
@@ -219,7 +251,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="20"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="10"
@@ -227,7 +259,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="30"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="13"
@@ -235,7 +267,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="27"
             y2="25"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="16"
@@ -243,7 +275,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="24"
             y2="30"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
         </svg>
       );
@@ -256,7 +288,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="18"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="18"
@@ -264,19 +296,19 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="18"
             y2="28"
             stroke="currentColor"
-            stroke-width="3"
+            stroke-width="4"
           />
           <path
             d="M 18 15 L 28 8 L 35 8"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <path
             d="M 18 25 L 28 32 L 35 32"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
         </svg>
       );
@@ -287,7 +319,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             d="M 14 12 L 14 28 L 22 28 A 8 8 0 0 0 22 12 Z"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="30"
@@ -295,7 +327,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="36"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="6"
@@ -303,7 +335,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="14"
             y2="16"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
           />
           <line
             x1="6"
@@ -311,7 +343,286 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="14"
             y2="24"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
+          />
+        </svg>
+      );
+    case "diode":
+      return (
+        <svg width="40" height="40">
+          <path
+            d="M 14 12 L 26 20 L 14 28 Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="26"
+            y1="12"
+            x2="26"
+            y2="28"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="5"
+            y1="20"
+            x2="14"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+          <line
+            x1="26"
+            y1="20"
+            x2="35"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+        </svg>
+      );
+    case "op_amp":
+      return (
+        <svg width="40" height="40">
+          <path
+            d="M 10 10 L 30 20 L 10 30 Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line x1="5" y1="15" x2="10" y2="15" stroke="currentColor" stroke-width="1.5" />
+          <line x1="5" y1="25" x2="10" y2="25" stroke="currentColor" stroke-width="1.5" />
+          <line x1="30" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      );
+    case "capacitor":
+      return (
+        <svg width="40" height="40">
+          <line
+            x1="5"
+            y1="20"
+            x2="15"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="15"
+            y1="10"
+            x2="15"
+            y2="30"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="25"
+            y1="10"
+            x2="25"
+            y2="30"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="25"
+            y1="20"
+            x2="35"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "inductor":
+      return (
+        <svg width="40" height="40">
+          <path
+            d="M 2 20 L 4 20 A 4 4 0 0 1 12 20 A 4 4 0 0 1 20 20 A 4 4 0 0 1 28 20 A 4 4 0 0 1 36 20 L 38 20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "source":
+      return (
+        <svg width="40" height="40">
+          <line
+            x1="5"
+            y1="20"
+            x2="17"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="17"
+            y1="10"
+            x2="17"
+            y2="30"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="23"
+            y1="15"
+            x2="23"
+            y2="25"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="23"
+            y1="20"
+            x2="35"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "ac_source":
+      return (
+        <svg width="40" height="40">
+          <circle
+            cx="20"
+            cy="20"
+            r="12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <path
+            d="M 12 20 Q 16 12 20 20 T 28 20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "vcc":
+      return (
+        <svg width="40" height="40">
+          <line
+            x1="20"
+            y1="10"
+            x2="20"
+            y2="35"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="10"
+            y1="10"
+            x2="30"
+            y2="10"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "gnd":
+      return (
+        <svg width="40" height="40">
+          <line
+            x1="20"
+            y1="5"
+            x2="20"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="10"
+            y1="20"
+            x2="30"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="13"
+            y1="25"
+            x2="27"
+            y2="25"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="16"
+            y1="30"
+            x2="24"
+            y2="30"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "transistor":
+      return (
+        <svg width="40" height="40">
+          <line
+            x1="5"
+            y1="20"
+            x2="18"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="18"
+            y1="12"
+            x2="18"
+            y2="28"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            d="M 18 15 L 28 8 L 35 8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <path
+            d="M 18 25 L 28 32 L 35 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+        </svg>
+      );
+    case "gate":
+      return (
+        <svg width="40" height="40">
+          <path
+            d="M 14 12 L 14 28 L 22 28 A 8 8 0 0 0 22 12 Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="30"
+            y1="20"
+            x2="36"
+            y2="20"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="6"
+            y1="16"
+            x2="14"
+            y2="16"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line
+            x1="6"
+            y1="24"
+            x2="14"
+            y2="24"
+            stroke="currentColor"
+            stroke-width="2.5"
           />
         </svg>
       );
@@ -328,7 +639,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             d="M 14 12 L 26 20 L 14 28 Z"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="26"
@@ -336,7 +647,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="26"
             y2="28"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="5"
@@ -344,7 +655,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="14"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
           <line
             x1="26"
@@ -352,8 +663,22 @@ export const thumbnails = (kind: Kind): JSX.Element => {
             x2="35"
             y2="20"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.5"
           />
+        </svg>
+      );
+    case "op_amp":
+      return (
+        <svg width="40" height="40">
+          <path
+            d="M 10 10 L 30 20 L 10 30 Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          />
+          <line x1="5" y1="15" x2="10" y2="15" stroke="currentColor" stroke-width="2.5" />
+          <line x1="5" y1="25" x2="10" y2="25" stroke="currentColor" stroke-width="2.5" />
+          <line x1="30" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="2.5" />
         </svg>
       );
     case "text":

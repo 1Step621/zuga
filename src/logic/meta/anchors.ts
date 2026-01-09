@@ -104,6 +104,33 @@ export const anchors = (content: Content<Kind>): WorldPos[] => {
     case "diode": {
       return content.points;
     }
+    case "op_amp": {
+      if (content.points.length < 2) return content.points;
+      const [p0, p1] = content.points;
+      const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
+      const dist = Math.hypot(dx, dy);
+      const angle = Math.atan2(dy, dx);
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      const cx = (p0.x + p1.x) / 2;
+      const cy = (p0.y + p1.y) / 2;
+
+      const halfDist = dist / 2;
+      const h = 120;
+
+      return [
+        asWorldPos({
+          x: cx - halfDist * cos - (h / 4) * sin,
+          y: cy - halfDist * sin + (h / 4) * cos,
+        }),
+        asWorldPos({
+          x: cx - halfDist * cos + (h / 4) * sin,
+          y: cy - halfDist * sin - (h / 4) * cos,
+        }),
+        p1,
+      ];
+    }
     default: {
       content satisfies never;
       throw new Error(`Unknown content kind: ${(content as any).kind}`);

@@ -18,4 +18,5 @@ export const names: Record<Kind, string> = {
   gate: "論理ゲート",
   junction: "結合点",
   diode: "ダイオード",
+  op_amp: "オペアンプ",
 };

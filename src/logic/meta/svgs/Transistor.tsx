@@ -25,6 +25,7 @@ export const Transistor = (
 
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
+    const leadStrokeWidth = props.props.leadStrokeWidth;
     const isNpn = props.props.type === "npn";
 
     return (
@@ -35,14 +36,14 @@ export const Transistor = (
         stroke-width={strokeWidth}
       >
         {/* Base lead */}
-        <line x1="-50" y1="0" x2="-20" y2="0" />
+        <line x1="-50" y1="0" x2="-20" y2="0" stroke-width={leadStrokeWidth} />
         {/* Base plate */}
         <line x1="-20" y1="-20" x2="-20" y2="20" stroke-width={strokeWidth * 2} />
         
         {/* Collector lead */}
-        <path d={`M 0 ${-dist / 2} L 0 ${-20} L -20 -8`} />
+        <path d={`M 0 ${-dist / 2} L 0 ${-20} L -20 -8`} stroke-width={leadStrokeWidth} />
         {/* Emitter lead */}
-        <path d={`M 0 ${dist / 2} L 0 ${20} L -20 8`} />
+        <path d={`M 0 ${dist / 2} L 0 ${20} L -20 8`} stroke-width={leadStrokeWidth} />
 
         {/* Arrow for Emitter */}
         <Show when={isNpn}>

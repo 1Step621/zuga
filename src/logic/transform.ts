@@ -42,3 +42,24 @@ export const updatePointPosition = (
     },
   });
 };
+
+export const moveContents = (uuids: Uuid[], delta: { x: number; y: number }) => {
+  const [contents, setContents] = contentsStore;
+  const newContents = { ...contents.contents };
+
+  uuids.forEach((uuid) => {
+    const content = newContents[uuid];
+    if (!content) return;
+    newContents[uuid] = {
+      ...content,
+      points: content.points.map((pt) => ({
+        x: pt.x + delta.x,
+        y: pt.y + delta.y,
+      })),
+    } as any;
+  });
+
+  setContents({
+    contents: newContents,
+  });
+};

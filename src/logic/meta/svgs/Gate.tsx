@@ -26,6 +26,7 @@ export const Gate = (
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
     const type = props.props.type;
+    const leadStrokeWidth = props.props.leadStrokeWidth;
 
     const w = 30; // gate width
     const h = 30; // gate height
@@ -38,15 +39,15 @@ export const Gate = (
         stroke-width={strokeWidth}
       >
         {/* Output lead */}
-        <line x1={w / 2} y1="0" x2={dist / 2} y2="0" />
+        <line x1={w / 2} y1="0" x2={dist / 2} y2="0" stroke-width={leadStrokeWidth} />
 
         {/* Input leads */}
         <Show when={type === "not"}>
-          <line x1={-dist / 2} y1="0" x2={-w / 2} y2="0" />
+          <line x1={-dist / 2} y1="0" x2={-w / 2} y2="0" stroke-width={leadStrokeWidth} />
         </Show>
         <Show when={type !== "not"}>
-          <line x1={-dist / 2} y1={-h / 4} x2={-w / 2} y2={-h / 4} />
-          <line x1={-dist / 2} y1={h / 4} x2={-w / 2} y2={h / 4} />
+          <line x1={-dist / 2} y1={-h / 4} x2={-w / 2} y2={-h / 4} stroke-width={leadStrokeWidth} />
+          <line x1={-dist / 2} y1={h / 4} x2={-w / 2} y2={h / 4} stroke-width={leadStrokeWidth} />
         </Show>
 
         <g transform={`translate(${-w / 2}, 0)`}>

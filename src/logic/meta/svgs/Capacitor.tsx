@@ -37,17 +37,19 @@ export const Capacitor = (
       </g>
     );
 
+    const leadStrokeWidth = props.props.leadStrokeWidth;
+
     const cWidth = 10;
     if (dist < cWidth * 2) {
-      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
+      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />);
     }
     const cMargin = (dist - cWidth) / 2;
     return ComponentGroup(
       <>
-        <line x1="0" y1="0" x2={cMargin} y2="0" />
+        <line x1="0" y1="0" x2={cMargin} y2="0" stroke-width={leadStrokeWidth} />
         <line x1={cMargin} y1="-15" x2={cMargin} y2="15" />
         <line x1={cMargin + cWidth} y1="-15" x2={cMargin + cWidth} y2="15" />
-        <line x1={cMargin + cWidth} y1="0" x2={dist} y2="0" />
+        <line x1={cMargin + cWidth} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
       </>
     );
   };

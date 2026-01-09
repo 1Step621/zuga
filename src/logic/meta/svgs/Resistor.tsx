@@ -37,14 +37,16 @@ export const Resistor = (
       </g>
     );
 
+    const leadStrokeWidth = props.props.leadStrokeWidth;
+
     const width = 50;
     if (dist < width) {
-      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" />);
+      return ComponentGroup(<line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />);
     }
     const margin = (dist - width) / 2;
     return ComponentGroup(
       <>
-        <line x1="0" y1="0" x2={margin} y2="0" />
+        <line x1="0" y1="0" x2={margin} y2="0" stroke-width={leadStrokeWidth} />
         <rect
           x={margin}
           y="-10"
@@ -56,11 +58,11 @@ export const Resistor = (
         />
         <Show when={props.props.variable}>
           <g transform={`translate(${margin + width / 2}, 0) rotate(45)`}>
-            <line x1="-25" y1="0" x2="25" y2="0" />
-            <polyline points="15,-5 25,0 15,5" />
+            <line x1="-25" y1="0" x2="25" y2="0" stroke-width={strokeWidth} />
+            <polyline points="15,-5 25,0 15,5" stroke-width={strokeWidth} />
           </g>
         </Show>
-        <line x1={margin + width} y1="0" x2={dist} y2="0" />
+        <line x1={margin + width} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
       </>
     );
   };
