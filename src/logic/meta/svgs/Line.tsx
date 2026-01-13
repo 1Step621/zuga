@@ -11,13 +11,84 @@ export const Line = (
   } & JSX.ShapeElementSVGAttributes<any>
 ) => {
   const shape = () => prerenders.line(props.points);
+  const arrowSize = (strokeWidth: number) => strokeWidth * 3 + 4;
+  const arrowOverlap = 1;
+  const arrowDepth = (strokeWidth: number) => {
+    const depth = arrowSize(strokeWidth) * Math.cos(Math.PI / 6) - arrowOverlap;
+    return depth < 0 ? 0 : depth;
+  };
+  const adjustPoint = (from: WorldPos, to: WorldPos, offset: number) => {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const length = Math.hypot(dx, dy);
+    if (length <= 0) {
+      return from;
+    }
+    const ratio = offset / length;
+    return {
+      x: from.x + dx * ratio,
+      y: from.y + dy * ratio,
+    };
+  };
+  const adjustedPoints = () => {
+    const points = shape().points;
+    if (points.length < 2) {
+      return points;
+    }
+    const result = points.slice();
+    const depth = arrowDepth(props.props.strokeWidth);
+    let startOffset = props.props.arrowStart ? depth : 0;
+    let endOffset = props.props.arrowEnd ? depth : 0;
+    if (0 < startOffset) {
+      const p0 = points[0];
+      const p1 = points[1];
+      const segLength = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+      if (segLength <= 0) {
+        startOffset = 0;
+      } else {
+        startOffset = Math.min(startOffset, segLength);
+      }
+    }
+    if (0 < endOffset) {
+      const pn = points[points.length - 1];
+      const pn_1 = points[points.length - 2];
+      const segLength = Math.hypot(pn.x - pn_1.x, pn.y - pn_1.y);
+      if (segLength <= 0) {
+        endOffset = 0;
+      } else {
+        endOffset = Math.min(endOffset, segLength);
+      }
+    }
+    if (points.length === 2 && 0 < startOffset + endOffset) {
+      const segLength = Math.hypot(
+        points[1].x - points[0].x,
+        points[1].y - points[0].y,
+      );
+      if (0 < segLength && segLength < startOffset + endOffset) {
+        const scale = segLength / (startOffset + endOffset);
+        startOffset *= scale;
+        endOffset *= scale;
+      }
+    }
+    if (0 < startOffset) {
+      result[0] = adjustPoint(points[0], points[1], startOffset);
+    }
+    if (0 < endOffset) {
+      result[result.length - 1] = adjustPoint(
+        points[points.length - 1],
+        points[points.length - 2],
+        endOffset,
+      );
+    }
+    return result;
+  };
   const arrowHead = (
     pos: WorldPos,
     angle: number,
     color: string,
     strokeWidth: number
   ) => {
-    const size = strokeWidth * 3 + 4; // 矢印のサイズ
+    const size = arrowSize(strokeWidth); // 矢印のサイズ
     const x1 = pos.x - size * Math.cos(angle - Math.PI / 6);
     const y1 = pos.y - size * Math.sin(angle - Math.PI / 6);
     const x2 = pos.x - size * Math.cos(angle + Math.PI / 6);
@@ -34,8 +105,8 @@ export const Line = (
   return (
     <g {...propsExcluded(props)}>
       <polyline
-        points={shape()
-          .points.map((pt) => `${pt.x},${pt.y}`)
+        points={adjustedPoints()
+          .map((pt) => `${pt.x},${pt.y}`)
           .join(" ")}
         fill="none"
         stroke={props.props.color}
