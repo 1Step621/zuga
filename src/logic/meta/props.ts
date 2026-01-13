@@ -36,7 +36,7 @@ export type Props<K extends Kind> = {
     color: string;
     strokeWidth: number;
     leadStrokeWidth: number;
-    variable?: boolean;
+    type: "fixed" | "variable" | "semi_fixed";
   };
   capacitor: {
     color: string;
@@ -160,7 +160,7 @@ export const defaultProps: { [K in Kind]: Props<K> } = {
     color: "#000000",
     strokeWidth: 2.5,
     leadStrokeWidth: 1.5,
-    variable: false,
+    type: "fixed",
   },
   capacitor: {
     color: "#000000",

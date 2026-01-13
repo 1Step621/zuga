@@ -212,9 +212,14 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       type: "length",
     },
     {
-      key: "variable",
-      name: "可変抵抗",
-      type: "boolean",
+      key: "type",
+      name: "抵抗の種類",
+      type: "select",
+      options: [
+        { label: "固定", value: "fixed" },
+        { label: "可変", value: "variable" },
+        { label: "半固定", value: "semi_fixed" },
+      ],
     },
   ],
   capacitor: [

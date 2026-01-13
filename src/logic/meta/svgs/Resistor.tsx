@@ -25,6 +25,7 @@ export const Resistor = (
 
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
+    const type = props.props.type;
 
     const ComponentGroup = (children: JSX.Element) => (
       <g
@@ -56,10 +57,16 @@ export const Resistor = (
           stroke={color}
           stroke-width={strokeWidth}
         />
-        <Show when={props.props.variable}>
+        <Show when={type === "variable"}>
           <g transform={`translate(${margin + width / 2}, 0) rotate(45)`}>
             <line x1="-25" y1="0" x2="25" y2="0" stroke-width={strokeWidth} />
             <polyline points="15,-5 25,0 15,5" stroke-width={strokeWidth} />
+          </g>
+        </Show>
+        <Show when={type === "semi_fixed"}>
+          <g transform={`translate(${margin + width / 2}, 0) rotate(45)`}>
+            <line x1="-25" y1="0" x2="25" y2="0" stroke-width={strokeWidth} />
+            <line x1="25" y1="-6" x2="25" y2="6" stroke-width={strokeWidth} />
           </g>
         </Show>
         <line x1={margin + width} y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
