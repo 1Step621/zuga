@@ -319,6 +319,11 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       type: "length",
     },
     {
+      key: "photo",
+      name: "フォトトランジスタ",
+      type: "boolean",
+    },
+    {
       key: "type",
       name: "タイプ",
       type: "select",

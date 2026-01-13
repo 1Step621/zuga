@@ -72,6 +72,7 @@ export type Props<K extends Kind> = {
     color: string;
     strokeWidth: number;
     leadStrokeWidth: number;
+    photo?: boolean;
     type: "npn" | "pnp";
   };
   gate: {
@@ -195,6 +196,7 @@ export const defaultProps: { [K in Kind]: Props<K> } = {
     color: "#000000",
     strokeWidth: 2.5,
     leadStrokeWidth: 1.5,
+    photo: false,
     type: "npn",
   },
   gate: {

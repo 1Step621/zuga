@@ -27,6 +27,7 @@ export const Transistor = (
     const color = props.props.color;
     const leadStrokeWidth = props.props.leadStrokeWidth;
     const isNpn = props.props.type === "npn";
+    const isPhoto = props.props.photo ?? false;
 
     return (
       <g
@@ -36,14 +37,30 @@ export const Transistor = (
         stroke-width={strokeWidth}
       >
         {/* Base lead */}
-        <line x1="-50" y1="0" x2="-20" y2="0" stroke-width={leadStrokeWidth} />
+        <Show when={!isPhoto}>
+          <line x1="-50" y1="0" x2="-20" y2="0" stroke-width={leadStrokeWidth} />
+        </Show>
         {/* Base plate */}
         <line x1="-20" y1="-20" x2="-20" y2="20" stroke-width={strokeWidth * 2} />
-        
+
         {/* Collector lead */}
         <path d={`M 0 ${-dist / 2} L 0 ${-20} L -20 -8`} stroke-width={leadStrokeWidth} />
         {/* Emitter lead */}
         <path d={`M 0 ${dist / 2} L 0 ${20} L -20 8`} stroke-width={leadStrokeWidth} />
+
+        {/* Light arrows */}
+        <Show when={isPhoto}>
+          <g stroke-width={leadStrokeWidth}>
+            <g transform="translate(-16, -30) rotate(40)">
+              <line x1="-12" y1="0" x2="0" y2="0" />
+              <path d="M -4 -3 L 0 0 L -4 3" />
+            </g>
+            <g transform="translate(-20, -24) rotate(40)">
+              <line x1="-12" y1="0" x2="0" y2="0" />
+              <path d="M -4 -3 L 0 0 L -4 3" />
+            </g>
+          </g>
+        </Show>
 
         {/* Arrow for Emitter */}
         <Show when={isNpn}>
