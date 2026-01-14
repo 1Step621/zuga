@@ -6,6 +6,8 @@ import Field from "./Field";
 import { Content } from "~/logic/content";
 import { Kind } from "~/logic/kind";
 import { Props } from "~/logic/meta/props";
+import { deleteSelection } from "~/logic/select";
+import { TbTrash } from "solid-icons/tb";
 
 export default function RightSidebar<K extends Kind>() {
   const [hand] = handStore;
@@ -52,6 +54,13 @@ export default function RightSidebar<K extends Kind>() {
               />
             )}
           </Index>
+          <hr class="border-slate-200" />
+          <button
+            class="p-2 rounded-md bg-red-700 text-white flex items-center gap-2 justify-center hover:bg-red-800 transition cursor-pointer"
+            onClick={() => deleteSelection()}
+          >
+            <TbTrash /> 削除
+          </button>
         </div>
       </Show>
     </aside>

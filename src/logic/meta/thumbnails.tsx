@@ -667,20 +667,6 @@ export const thumbnails = (kind: Kind): JSX.Element => {
           />
         </svg>
       );
-    case "op_amp":
-      return (
-        <svg width="40" height="40">
-          <path
-            d="M 10 10 L 30 20 L 10 30 Z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <line x1="5" y1="15" x2="10" y2="15" stroke="currentColor" stroke-width="2.5" />
-          <line x1="5" y1="25" x2="10" y2="25" stroke="currentColor" stroke-width="2.5" />
-          <line x1="30" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="2.5" />
-        </svg>
-      );
     case "text":
       return (
         <svg width="40" height="40">
