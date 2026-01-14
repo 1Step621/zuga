@@ -1,8 +1,53 @@
-import { splitProps } from "solid-js";
+import { For, splitProps } from "solid-js";
 import { JSX } from "solid-js";
 import { WorldPos } from "~/utilities/pos";
 import { Props } from "../props";
 import { Kind } from "../../kind";
+
+export const MultilineText = (props: {
+  text: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  align: "start" | "middle" | "end";
+  baseline: "auto" | "hanging" | "middle";
+  fill?: string;
+  propsExcluded?: any;
+}) => {
+  const lines = () => props.text.split("\n");
+  const firstLineOffset = () => {
+    const n = lines().length;
+    switch (props.baseline) {
+      case "hanging":
+        return "0.8em";
+      case "middle":
+        return `${0.4 - (n - 1) * 0.6}em`;
+      case "auto":
+        return `-${(n - 1) * 1.2}em`;
+      default:
+        return "0";
+    }
+  };
+
+  return (
+    <text
+      x={props.x}
+      y={props.y}
+      fill={props.fill}
+      font-size={props.fontSize + "px"}
+      text-anchor={props.align}
+      {...props.propsExcluded}
+    >
+      <For each={lines()}>
+        {(line, i) => (
+          <tspan x={props.x} dy={i() === 0 ? firstLineOffset() : "1.2em"}>
+            {line}
+          </tspan>
+        )}
+      </For>
+    </text>
+  );
+};
 
 export const getLabelPos = (
   shape: { position: WorldPos; size: { x: number; y: number } },

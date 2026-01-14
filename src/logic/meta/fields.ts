@@ -33,14 +33,14 @@ export type SelectField<K extends Kind> = {
   type: "select";
 };
 
-export type OtherPropField<K extends Kind> =
+export type PropField<K extends Kind> =
   | ColorField<K>
   | LengthField<K>
   | TextField<K>
   | BooleanField<K>
   | SelectField<K>;
 
-export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
+export const fieldsOfProps: { [K in Kind]: PropField<K>[] } = {
   rectangle: [
     {
       key: "color",
@@ -61,6 +61,7 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       key: "label",
       name: "ラベル",
       type: "text",
+      multiline: true,
     },
     {
       key: "labelColor",
@@ -105,6 +106,7 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       key: "label",
       name: "ラベル",
       type: "text",
+      multiline: true,
     },
     {
       key: "labelColor",
@@ -149,6 +151,7 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       key: "label",
       name: "ラベル",
       type: "text",
+      multiline: true,
     },
     {
       key: "labelColor",
@@ -446,6 +449,7 @@ export const fieldsOfProps: { [K in Kind]: OtherPropField<K>[] } = {
       key: "content",
       name: "内容",
       type: "text",
+      multiline: true,
     },
     {
       key: "fontSize",

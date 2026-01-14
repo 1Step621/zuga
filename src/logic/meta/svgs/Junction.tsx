@@ -12,7 +12,7 @@ export const Junction = (
 ) => {
   const shape = () => prerenders.junction(props.points);
 
-  const radius = 3;
+  const radius = 2;
 
   return (
     <g {...propsExcluded(props)}>

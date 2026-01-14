@@ -386,7 +386,7 @@ export const thumbnails = (kind: Kind): JSX.Element => {
       return (
         <svg width="40" height="40">
           <path
-            d="M 10 10 L 30 20 L 10 30 Z"
+            d="M 10 5 L 30 20 L 10 35 Z"
             fill="none"
             stroke="currentColor"
             stroke-width="2.5"

@@ -1,10 +1,11 @@
-import { OtherPropField } from "~/logic/meta/fields";
+import { PropField } from "~/logic/meta/fields";
 import KeyValue from "./KeyValue";
-import { Index, Match, Switch } from "solid-js";
+import { Index, Match, Show, Switch } from "solid-js";
 import ColorPicker from "./ColorPicker";
+import { Kind } from "~/logic/kind";
 
 export default function Field(props: {
-  field: OtherPropField<any>;
+  field: PropField<Kind>;
   value: any;
   onChange: (v: any) => void;
 }) {
@@ -26,13 +27,26 @@ export default function Field(props: {
               class="w-full border border-slate-300 rounded px-2 py-1"
             />
           </Match>
-          <Match when={props.field.type === "text"}>
-            <input
-              type="text"
-              value={props.value}
-              onInput={(e) => props.onChange(e.currentTarget.value)}
-              class="w-full border border-slate-300 rounded px-2 py-1"
-            />
+          <Match when={props.field.type === "text" && props.field}>
+            {(field) => (
+              <Show
+                when={field().multiline}
+                fallback={
+                  <input
+                    type="text"
+                    value={props.value}
+                    onInput={(e) => props.onChange(e.currentTarget.value)}
+                    class="w-full border border-slate-300 rounded px-2 py-1"
+                  />
+                }
+              >
+                <textarea
+                  value={props.value}
+                  onInput={(e) => props.onChange(e.currentTarget.value)}
+                  class="w-full border border-slate-300 rounded px-2 py-1 min-h-25"
+                />
+              </Show>
+            )}
           </Match>
           <Match when={props.field.type === "boolean"}>
             <div

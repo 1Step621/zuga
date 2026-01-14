@@ -2,7 +2,7 @@ import { JSX, Show } from "solid-js";
 import { Props } from "../props";
 import { WorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
-import { propsExcluded } from "./utils";
+import { MultilineText, propsExcluded } from "./utils";
 
 export const Text = (
   props: {
@@ -14,24 +14,23 @@ export const Text = (
   const verticalAlign = () => {
     switch (props.props.verticalAlign) {
       case "top":
-        return "text-before-edge";
+        return "hanging";
       case "middle":
-        return "central";
+        return "middle";
       case "bottom":
-        return "text-after-edge";
+        return "auto";
     }
   };
   return (
-    <text
+    <MultilineText
+      text={props.props.content}
       x={shape().position.x}
       y={shape().position.y}
-      font-size={props.props.fontSize + "px"}
+      fontSize={props.props.fontSize}
+      align={props.props.align}
+      baseline={verticalAlign() as any}
       fill={props.props.color}
-      text-anchor={props.props.align}
-      dominant-baseline={verticalAlign() as any}
-      {...propsExcluded(props)}
-    >
-      {props.props.content}
-    </text>
+      propsExcluded={propsExcluded(props)}
+    />
   );
 };

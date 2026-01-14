@@ -2,7 +2,7 @@ import { JSX, Show } from "solid-js";
 import { Props } from "../props";
 import { WorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
-import { getLabelPos, propsExcluded } from "./utils";
+import { getLabelPos, MultilineText, propsExcluded } from "./utils";
 
 export const Rectangle = (
   props: {
@@ -28,16 +28,15 @@ export const Rectangle = (
         stroke-width={props.props.strokeWidth}
       />
       <Show when={props.props.label}>
-        <text
+        <MultilineText
+          text={props.props.label!}
           x={labelPos().x}
           y={labelPos().y}
           fill={props.props.labelColor ?? "black"}
-          font-size={(props.props.labelSize ?? 16) + "px"}
-          text-anchor={labelPos().anchor}
-          dominant-baseline={labelPos().baseline}
-        >
-          {props.props.label}
-        </text>
+          fontSize={props.props.labelSize ?? 16}
+          align={labelPos().anchor}
+          baseline={labelPos().baseline}
+        />
       </Show>
     </g>
   );
