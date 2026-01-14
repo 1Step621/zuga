@@ -20,16 +20,15 @@ export const OpAmp = (
 
     const dx = p1.x - p0.x;
     const dy = p1.y - p0.y;
-    const dist = Math.hypot(dx, dy);
+    const size = 75;
+    const h = 90;
+    const dist = Math.max(Math.hypot(dx, dy), size);
     const angle = Math.atan2(dy, dx);
     const deg = (angle * 180) / Math.PI;
 
     const strokeWidth = props.props.strokeWidth;
     const color = props.props.color;
     const leadStrokeWidth = props.props.leadStrokeWidth;
-
-    const size = 100;
-    const h = 120;
 
     // Center between p0 and p1
     const cx = (p0.x + p1.x) / 2;
@@ -53,28 +52,13 @@ export const OpAmp = (
         <line x1={size / 2} y1="0" x2={dist / 2} y2="0" stroke-width={leadStrokeWidth} />
 
         {/* Labels */}
-        <text
-          x={-size / 2 + 15}
-          y={-h / 4}
-          stroke="none"
-          fill={color}
-          font-size="24"
-          text-anchor="middle"
-          dominant-baseline="middle"
-        >
-          -
-        </text>
-        <text
-          x={-size / 2 + 15}
-          y={h / 4}
-          stroke="none"
-          fill={color}
-          font-size="24"
-          text-anchor="middle"
-          dominant-baseline="middle"
-        >
-          +
-        </text>
+        <g transform={`translate(${-size / 2 + 11}, ${-h / 4})`}>
+          <line x1="-6" y1="0" x2="6" y2="0" stroke={color} stroke-width={strokeWidth} />
+        </g>
+        <g transform={`translate(${-size / 2 + 11}, ${h / 4})`}>
+          <line x1="-6" y1="0" x2="6" y2="0" stroke={color} stroke-width={strokeWidth} />
+          <line x1="0" y1="-6" x2="0" y2="6" stroke={color} stroke-width={strokeWidth} />
+        </g>
       </g>
     );
   };

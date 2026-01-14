@@ -109,7 +109,8 @@ export const anchors = (content: Content<Kind>): WorldPos[] => {
       const [p0, p1] = content.points;
       const dx = p1.x - p0.x;
       const dy = p1.y - p0.y;
-      const dist = Math.hypot(dx, dy);
+      const h = 90;
+      const dist = Math.max(Math.hypot(dx, dy), 75);
       const angle = Math.atan2(dy, dx);
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
@@ -117,7 +118,6 @@ export const anchors = (content: Content<Kind>): WorldPos[] => {
       const cy = (p0.y + p1.y) / 2;
 
       const halfDist = dist / 2;
-      const h = 120;
 
       return [
         asWorldPos({

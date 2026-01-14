@@ -15,10 +15,10 @@ export const Vcc = (
   const renderComponent = () => {
     const points = shape().points;
     if (points.length < 2) return null;
-    const p0 = points[0];
-    const p1 = points[1];
-    const dx = p1.x - p0.x;
-    const dy = p1.y - p0.y;
+    const start = points[1];
+    const end = points[0];
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
     const dist = Math.hypot(dx, dy);
     const angle = Math.atan2(dy, dx);
     const deg = (angle * 180) / Math.PI;
@@ -29,7 +29,7 @@ export const Vcc = (
 
     return (
       <g
-        transform={`translate(${p0.x}, ${p0.y}) rotate(${deg})`}
+        transform={`translate(${start.x}, ${start.y}) rotate(${deg})`}
         fill="none"
         stroke={color}
         stroke-width={strokeWidth}
@@ -40,9 +40,5 @@ export const Vcc = (
     );
   };
 
-  return (
-    <g {...propsExcluded(props)}>
-      {renderComponent()}
-    </g>
-  );
+  return <g {...propsExcluded(props)}>{renderComponent()}</g>;
 };
