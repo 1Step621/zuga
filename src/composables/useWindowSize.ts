@@ -17,7 +17,7 @@ export const useWindowSize = () => {
     onResize();
     window.addEventListener("resize", onResize, { capture: true });
     onCleanup(() => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onResize, { capture: true });
     });
   });
 

@@ -17,8 +17,10 @@ export const useClick = () => {
     window.addEventListener("mousedown", handleMousedown, { capture: true });
     window.addEventListener("mouseup", handleMouseup, { capture: true });
     onCleanup(() => {
-      window.removeEventListener("mousedown", handleMousedown);
-      window.removeEventListener("mouseup", handleMouseup);
+      window.removeEventListener("mousedown", handleMousedown, {
+        capture: true,
+      });
+      window.removeEventListener("mouseup", handleMouseup, { capture: true });
     });
   });
 

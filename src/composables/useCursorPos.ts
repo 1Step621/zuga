@@ -19,7 +19,9 @@ export const useCursorPos = () => {
 
     window.addEventListener("mousemove", handleMouseMove, { capture: true });
     onCleanup(() => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove, {
+        capture: true,
+      });
     });
   });
 
