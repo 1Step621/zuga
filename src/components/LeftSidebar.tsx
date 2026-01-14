@@ -124,10 +124,8 @@ export default function Sidebar() {
 
     const svg = `${svgHeader}${svgContents}${svgFooter}`;
 
-    const blob = new Blob([svg], { type: "image/svg+xml" });
-    const svgUrl = URL.createObjectURL(blob);
-
     if (as === "png") {
+      const encoder = new TextEncoder();
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -157,8 +155,16 @@ export default function Sidebar() {
       img.onerror = () => {
         alert("PNG形式での保存に失敗しました。");
       };
-      img.src = svgUrl;
+
+      let latinText = "";
+      for (const char of encoder.encode(svg)) {
+        latinText += String.fromCharCode(char);
+      }
+
+      img.src = `data:image/svg+xml;base64,${btoa(latinText)}`;
     } else {
+      const blob = new Blob([svg], { type: "image/svg+xml" });
+      const svgUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = svgUrl;
       a.download = "canvas.svg";
