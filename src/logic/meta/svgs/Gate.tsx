@@ -20,7 +20,7 @@ export const Gate = (
 
     const dx = p1.x - p0.x;
     const dy = p1.y - p0.y;
-    const dist = Math.max(Math.hypot(dx, dy), 40);
+    const dist = Math.max(Math.hypot(dx, dy), 80);
     const angle = Math.atan2(dy, dx);
 
     const strokeWidth = props.props.strokeWidth;
@@ -28,8 +28,9 @@ export const Gate = (
     const type = props.props.type;
     const leadStrokeWidth = props.props.leadStrokeWidth;
 
-    const w = 30; // gate width
+    const w = 45; // gate width
     const h = 30; // gate height
+    const notW = (h * Math.sqrt(3)) / 2; // width for equilateral triangle with height h
 
     return (
       <g
@@ -39,15 +40,24 @@ export const Gate = (
         stroke-width={strokeWidth}
       >
         {/* Output lead */}
-        <line x1={w / 2} y1="0" x2={dist / 2} y2="0" stroke-width={leadStrokeWidth} />
+        <Show when={type === "not"}>
+          <line x1={notW / 2} y1="0" x2={dist / 2} y2="0" stroke-width={leadStrokeWidth} />
+        </Show>
+        <Show when={type !== "not"}>
+          <line x1={w / 2} y1="0" x2={dist / 2} y2="0" stroke-width={leadStrokeWidth} />
+        </Show>
 
         {/* Input leads */}
         <Show when={type === "not"}>
-          <line x1={-dist / 2} y1="0" x2={-w / 2} y2="0" stroke-width={leadStrokeWidth} />
+          <line x1={-dist / 2} y1="0" x2={-notW / 2} y2="0" stroke-width={leadStrokeWidth} />
         </Show>
-        <Show when={type !== "not"}>
+        <Show when={type === "and" || type === "nand"}>
           <line x1={-dist / 2} y1={-h / 4} x2={-w / 2} y2={-h / 4} stroke-width={leadStrokeWidth} />
           <line x1={-dist / 2} y1={h / 4} x2={-w / 2} y2={h / 4} stroke-width={leadStrokeWidth} />
+        </Show>
+        <Show when={type === "or" || type === "nor" || type === "xor"}>
+          <line x1={-dist / 2} y1={-h / 4} x2={-w / 2 + w / 8 - 1} y2={-h / 4} stroke-width={leadStrokeWidth} />
+          <line x1={-dist / 2} y1={h / 4} x2={-w / 2 + w / 8 - 1} y2={h / 4} stroke-width={leadStrokeWidth} />
         </Show>
 
         <g transform={`translate(${-w / 2}, 0)`}>
@@ -68,11 +78,13 @@ export const Gate = (
             </Show>
           </Show>
           <Show when={type === "not"}>
-            <path d={`M 0 ${-h / 2} L ${w * 0.8} 0 L 0 ${h / 2} Z`} />
-            <circle cx={w * 0.8 + 3} cy="0" r="3" fill="white" />
+            <g transform={`translate(${(w - notW) / 2}, 0)`}>
+              <path d={`M 0 ${-h / 2} L ${notW} 0 L 0 ${h / 2} Z`} />
+              <circle cx={notW + 3} cy="0" r="3" fill="white" />
+            </g>
           </Show>
           <Show when={type === "xor"}>
-            <path d={`M ${-5} ${-h / 2} Q 0 0 ${-5} ${h / 2}`} />
+            <path d={`M ${-w / 6} ${-h / 2} Q 0 0 ${-w / 6} ${h / 2}`} />
             <path
               d={`M 0 ${-h / 2} Q ${w / 4} 0 0 ${h / 2} C ${w / 2} ${h / 2} ${w} 0 ${w} 0 C ${w} 0 ${w / 2} ${-h / 2} 0 ${-h / 2} Z`}
             />
