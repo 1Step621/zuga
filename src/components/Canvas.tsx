@@ -294,6 +294,10 @@ export default function Canvas() {
           e.preventDefault();
           pan(cursorPos.screen());
           return;
+        case 2:
+          e.preventDefault();
+          pan(cursorPos.screen());
+          return;
       }
     } else if (hand.mode === "draw") {
       switch (e.button) {
@@ -328,7 +332,12 @@ export default function Canvas() {
           pan(cursorPos.screen());
           return;
         case 2:
-          cancelDrawing();
+          e.preventDefault();
+          if (hand.points.length === 0) {
+            pan(cursorPos.screen());
+          } else {
+            cancelDrawing();
+          }
           return;
       }
     } else if (hand.mode === "pan") {
