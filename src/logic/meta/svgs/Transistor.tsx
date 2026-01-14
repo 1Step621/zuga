@@ -31,22 +31,42 @@ export const Transistor = (
 
     return (
       <g
-        transform={`translate(${(p0.x + p1.x) / 2}, ${(p0.y + p1.y) / 2}) rotate(${(angle * 180) / Math.PI + 90})`}
+        transform={`translate(${(p0.x + p1.x) / 2}, ${
+          (p0.y + p1.y) / 2
+        }) rotate(${(angle * 180) / Math.PI + 90})`}
         fill="none"
         stroke={color}
         stroke-width={strokeWidth}
       >
         {/* Base lead */}
         <Show when={!isPhoto}>
-          <line x1="-50" y1="0" x2="-20" y2="0" stroke-width={leadStrokeWidth} />
+          <line
+            x1="-50"
+            y1="0"
+            x2="-20"
+            y2="0"
+            stroke-width={leadStrokeWidth}
+          />
         </Show>
         {/* Base plate */}
-        <line x1="-20" y1="-20" x2="-20" y2="20" stroke-width={strokeWidth * 2} />
+        <line
+          x1="-20"
+          y1="-20"
+          x2="-20"
+          y2="20"
+          stroke-width={strokeWidth * 2}
+        />
 
         {/* Collector lead */}
-        <path d={`M 0 ${-dist / 2} L 0 ${-20} L -20 -8`} stroke-width={leadStrokeWidth} />
+        <path
+          d={`M 0 ${-dist / 2} L 0 ${-20} L -20 -8`}
+          stroke-width={leadStrokeWidth}
+        />
         {/* Emitter lead */}
-        <path d={`M 0 ${dist / 2} L 0 ${20} L -20 8`} stroke-width={leadStrokeWidth} />
+        <path
+          d={`M 0 ${dist / 2} L 0 ${20} L -20 8`}
+          stroke-width={leadStrokeWidth}
+        />
 
         {/* Light arrows */}
         <Show when={isPhoto}>
@@ -67,24 +87,19 @@ export const Transistor = (
           <polygon
             points={`0,0 -4,8 4,8`}
             fill={color}
-            transform={`translate(-2, 18) rotate(125)`}
+            transform={`translate(-2, 18.5) rotate(120)`}
           />
         </Show>
         <Show when={!isNpn}>
           <polygon
             points={`0,0 -4,8 4,8`}
             fill={color}
-            transform={`translate(-20, 8) rotate(-55)`}
+            transform={`translate(-15, 11) rotate(-60)`}
           />
         </Show>
       </g>
     );
-
   };
 
-  return (
-    <g {...propsExcluded(props)}>
-      {renderComponent()}
-    </g>
-  );
+  return <g {...propsExcluded(props)}>{renderComponent()}</g>;
 };
