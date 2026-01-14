@@ -410,6 +410,19 @@ export default function Canvas() {
     });
   });
 
+  useHotkey("y", { ctrl: true }, () => {
+    if (contents.undoHistory.length === 0) return;
+    batch(() => {
+      const next = contents.undoHistory[contents.undoHistory.length - 1];
+      setContents({
+        contents: next,
+        undoHistory: contents.undoHistory.slice(0, -1),
+        history: [...contents.history, { ...contents.contents }],
+      });
+      setHand({ selecteds: [] });
+    });
+  });
+
   useHotkey("c", { ctrl: true }, () => {
     if (hand.mode !== "select") return;
     setClipboard({
