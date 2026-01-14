@@ -129,8 +129,9 @@ export default function Sidebar() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
-        canvas.width = xMax - xMin;
-        canvas.height = yMax - yMin;
+        const scale = 10;
+        canvas.width = (xMax - xMin) * scale;
+        canvas.height = (yMax - yMin) * scale;
         const ctx = canvas.getContext("2d");
         if (!ctx) {
           alert("PNG形式での保存に失敗しました。");
@@ -138,7 +139,7 @@ export default function Sidebar() {
         }
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob((blob) => {
           if (!blob) {
             alert("PNG形式での保存に失敗しました。");
