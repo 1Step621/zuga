@@ -12,14 +12,14 @@ export const Junction = (
 ) => {
   const shape = () => prerenders.junction(props.points);
 
-  const radius = 2;
+  const radius = () => props.props.fill ? 2 : 4;
 
   return (
     <g {...propsExcluded(props)}>
       <circle
         cx={shape().position.x}
         cy={shape().position.y}
-        r={radius}
+        r={radius()}
         fill={props.props.fill ? props.props.color : "white"}
         stroke={props.props.color}
         stroke-width={props.props.strokeWidth}
