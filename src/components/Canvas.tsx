@@ -57,10 +57,12 @@ import { SnapLine } from "~/logic/snapLine";
 import LineGuide from "./LineGuide";
 import { unwrap } from "solid-js/store";
 import { clipboardStore } from "~/stores/clipboardStore";
+import { keyboardStore } from "~/stores/keyboardStore";
 
 export default function Canvas() {
   const [hand, setHand] = handStore;
   const [contents, setContents] = contentsStore;
+  const [keyboard] = keyboardStore;
   const [clipboard, setClipboard] = clipboardStore;
   const [camera, setCamera] = cameraStore;
   const { isDown, lastReleasedAt } = useClick();
@@ -80,7 +82,7 @@ export default function Canvas() {
     height: 30 * camera.scale,
   }));
   const gridPosition = createMemo(() =>
-    worldToScreen(asWorldPos({ x: 0, y: 0 }), camera, windowSize())
+    worldToScreen(asWorldPos({ x: 0, y: 0 }), camera, windowSize()),
   );
 
   const northWest = () =>
@@ -89,7 +91,7 @@ export default function Canvas() {
     screenToWorld(
       asScreenPos({ x: windowSize().width, y: windowSize().height }),
       camera,
-      windowSize()
+      windowSize(),
     );
 
   const cursorStyle = createMemo((): JSX.CSSProperties["cursor"] => {
@@ -154,7 +156,7 @@ export default function Canvas() {
     onMove: () => {
       if (hand.mode !== "select") return;
       const rectSelection = normalizeRect(
-        createRectFromTwoPoints(rectSelectionOrigin()!, cursorPos.world())
+        createRectFromTwoPoints(rectSelectionOrigin()!, cursorPos.world()),
       );
       selectByRect(rectSelection);
       setHand({
@@ -175,9 +177,34 @@ export default function Canvas() {
   const startItemDrag = useDrag({
     onStart: () => {
       if (hand.mode !== "select") return;
-      setItemDragOriginals(
-        hand.selecteds.map((uuid) => contents.contents[uuid]).filter(Boolean)
-      );
+
+      if (keyboard.ctrl) {
+        const newContentsMap: Record<Uuid, Content<Kind>> = {};
+        const newUuids: Uuid[] = [];
+        for (const uuid of hand.selecteds) {
+          const content = contents.contents[uuid];
+          if (!content) continue;
+          const newUuid = crypto.randomUUID() as Uuid;
+          const duplicated = {
+            ...content,
+            uuid: newUuid,
+            points: content.points.map((pt) => asWorldPos({ ...pt })),
+          };
+          newContentsMap[newUuid] = duplicated;
+          newUuids.push(newUuid);
+        }
+        batch(() => {
+          setContents("contents", (prev) => ({ ...prev, ...newContentsMap }));
+          setItemDragOriginals(Object.values(newContentsMap));
+        });
+        setHand({
+          selecteds: newUuids,
+        });
+      } else {
+        setItemDragOriginals(
+          hand.selecteds.map((uuid) => contents.contents[uuid]).filter(Boolean),
+        );
+      }
     },
     onMove: (delta) => {
       if (hand.mode !== "select") return;
@@ -195,8 +222,8 @@ export default function Canvas() {
               x: pt.x + delta.x / camera.scale,
               y: pt.y + delta.y / camera.scale,
             }),
-            hand.selecteds
-          )
+            hand.selecteds,
+          ),
         );
         let closestDelta: { x: number; y: number } = { x: delta.x, y: delta.y };
         let closestDist = Infinity;
@@ -204,7 +231,7 @@ export default function Canvas() {
           const originalPoint = allPoints[index];
           const dist = Math.hypot(
             snapped.world.x - (originalPoint.x + delta.x / camera.scale),
-            snapped.world.y - (originalPoint.y + delta.y / camera.scale)
+            snapped.world.y - (originalPoint.y + delta.y / camera.scale),
           );
           if (dist < closestDist) {
             closestDist = dist;
@@ -221,7 +248,7 @@ export default function Canvas() {
             asWorldPos({
               x: pt.x + closestDelta.x,
               y: pt.y + closestDelta.y,
-            })
+            }),
           );
           updateContentPoints(original.uuid, updatedPoints);
         });
@@ -265,7 +292,7 @@ export default function Canvas() {
             x: original.x + delta.x / camera.scale,
             y: original.y + delta.y / camera.scale,
           }),
-          hand.selecteds
+          hand.selecteds,
         );
         setCurrrentSnap(to);
         updatePointPosition(hand.selecteds[0], index, to.world);
@@ -455,7 +482,7 @@ export default function Canvas() {
           asWorldPos({
             x: pt.x + 30,
             y: pt.y + 30,
-          })
+          }),
         ),
       };
     }
@@ -528,7 +555,7 @@ export default function Canvas() {
         position: { x: bbox.x, y: bbox.y },
         size: { x: bbox.width, y: bbox.height },
       },
-      strokeWidth / 2
+      strokeWidth / 2,
     );
     setContents({
       rects: {
