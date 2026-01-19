@@ -67,6 +67,7 @@ export type Props<K extends Kind> = {
     color: string;
     strokeWidth: number;
     leadStrokeWidth: number;
+    type: "earth" | "signal" | "chassis";
   };
   transistor: {
     color: string;
@@ -191,6 +192,7 @@ export const defaultProps: { [K in Kind]: Props<K> } = {
     color: "#000000",
     strokeWidth: 2.5,
     leadStrokeWidth: 1.5,
+    type: "earth",
   },
   transistor: {
     color: "#000000",

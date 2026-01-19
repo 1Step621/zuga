@@ -387,6 +387,16 @@ export const fieldsOfProps: { [K in Kind]: PropField<K>[] } = {
       name: "リード線の太さ",
       type: "length",
     },
+    {
+      key: "type",
+      name: "グラウンドの種類",
+      type: "select",
+      options: [
+        { label: "アース (Earth)", value: "earth" },
+        { label: "信号 (Signal)", value: "signal" },
+        { label: "フレーム (Chassis)", value: "chassis" },
+      ],
+    },
   ],
   diode: [
     {

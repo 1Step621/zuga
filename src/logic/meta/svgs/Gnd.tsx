@@ -1,4 +1,4 @@
-import { JSX, Show } from "solid-js";
+import { JSX, Match, Show, Switch } from "solid-js";
 import { Props } from "../props";
 import { WorldPos, asWorldPos } from "~/utilities/pos";
 import { prerenders } from "../prerenders";
@@ -41,9 +41,25 @@ export const Gnd = (
     return ComponentGroup(
       <>
         <line x1="0" y1="0" x2={dist} y2="0" stroke-width={leadStrokeWidth} />
-        <line x1={dist} y1="-15" x2={dist} y2="15" />
-        <line x1={dist + 5} y1="-10" x2={dist + 5} y2="10" />
-        <line x1={dist + 10} y1="-5" x2={dist + 10} y2="5" />
+        <Switch>
+          <Match when={props.props.type === "earth"}>
+            <line x1={dist} y1="-15" x2={dist} y2="15" />
+            <line x1={dist + 5} y1="-10" x2={dist + 5} y2="10" />
+            <line x1={dist + 10} y1="-5" x2={dist + 10} y2="5" />
+          </Match>
+          <Match when={props.props.type === "signal"}>
+            <polygon
+              points={`${dist},-15 ${dist + 15},0 ${dist},15`}
+              stroke-width={strokeWidth}
+            />
+          </Match>
+          <Match when={props.props.type === "chassis"}>
+            <line x1={dist} y1="-12" x2={dist} y2="12" />
+            <line x1={dist} y1="-11" x2={dist + 12} y2="-5" />
+            <line x1={dist} y1="0" x2={dist + 12} y2="6" />
+            <line x1={dist} y1="11" x2={dist + 12} y2="17" />
+          </Match>
+        </Switch>
       </>
     );
   };
