@@ -15,9 +15,10 @@ import {
 } from "solid-icons/tb";
 import { defaultHand, Mode } from "~/logic/hand";
 import { names } from "~/logic/meta/names";
-import { contentsStore } from "~/stores/contentsStore";
+import { contentsStore, loadContents } from "~/stores/contentsStore";
 import { Svg } from "~/logic/meta/svgs";
 import { Portal, render } from "solid-js/web";
+import { useHotkey } from "~/composables/useHotkey";
 
 export default function Sidebar() {
   const [hand, setHand] = handStore;
@@ -27,7 +28,7 @@ export default function Sidebar() {
     x: number;
     y: number;
   } | null>(null);
-  const [contents, setContents] = contentsStore;
+  const [contents] = contentsStore;
 
   const ModeButton = (props: {
     mode: Mode;
@@ -57,12 +58,8 @@ export default function Sidebar() {
         } flex flex-row items-center gap-3 overflow-hidden`}
         onClick={() => setHand({ ...defaultHand("draw"), kind: props.kind })}
       >
-        <div class="shrink-0">
-          {thumbnails(props.kind)}
-        </div>
-        <span class="truncate text-left flex-1">
-          {names[props.kind]}
-        </span>
+        <div class="shrink-0">{thumbnails(props.kind)}</div>
+        <span class="truncate text-left flex-1">{names[props.kind]}</span>
       </button>
     );
   };
@@ -81,24 +78,24 @@ export default function Sidebar() {
 
   const download = async (as: "svg" | "png") => {
     const xMin = Math.min(
-      ...Object.values(contents.rects).map((rect) => rect.position.x)
+      ...Object.values(contents.rects).map((rect) => rect.position.x),
     );
     const yMin = Math.min(
-      ...Object.values(contents.rects).map((rect) => rect.position.y)
+      ...Object.values(contents.rects).map((rect) => rect.position.y),
     );
     const xMax = Math.max(
       ...Object.values(contents.rects).map(
-        (rect) => rect.position.x + rect.size.x
-      )
+        (rect) => rect.position.x + rect.size.x,
+      ),
     );
     const yMax = Math.max(
       ...Object.values(contents.rects).map(
-        (rect) => rect.position.y + rect.size.y
-      )
+        (rect) => rect.position.y + rect.size.y,
+      ),
     );
 
     const katex = Object.values(contents.contents).some(
-      (content) => content.kind === "math"
+      (content) => content.kind === "math",
     )
       ? (await import("../katex-inlined.min.css?raw")).default
       : "";
@@ -174,31 +171,15 @@ export default function Sidebar() {
     }
   };
 
+  useHotkey("s", { ctrl: true }, (e) => {
+    e.preventDefault();
+    download("svg");
+  });
+
   const load = (e: Event) => {
     const file = (e.currentTarget! as HTMLInputElement).files?.item(0);
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result;
-      if (typeof text !== "string") return;
-      try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, "image/svg+xml");
-        const metadata = doc.querySelector("metadata")?.textContent;
-        if (!metadata) throw new Error("No metadata found");
-        const parsed = JSON.parse(metadata);
-        setContents({
-          contents: parsed,
-          rects: {},
-          history: [],
-          undoHistory: [],
-        });
-      } catch (error) {
-        alert("SVGの読み込みに失敗しました。");
-        console.error(error);
-      }
-    };
-    reader.readAsText(file);
+    loadContents(file);
   };
 
   return (

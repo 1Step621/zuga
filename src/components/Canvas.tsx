@@ -55,7 +55,6 @@ import { useClick } from "~/composables/useClick";
 import { useSnap } from "~/composables/useSnap";
 import { SnapLine } from "~/logic/snapLine";
 import LineGuide from "./LineGuide";
-import { unwrap } from "solid-js/store";
 import { clipboardStore } from "~/stores/clipboardStore";
 import { keyboardStore } from "~/stores/keyboardStore";
 

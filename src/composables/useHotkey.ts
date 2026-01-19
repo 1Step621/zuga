@@ -15,7 +15,7 @@ export const useHotkey = (
     if (
       e.key === key &&
       !!modifiers.alt === e.altKey &&
-      !!modifiers.ctrl === e.ctrlKey
+      !!modifiers.ctrl === (e.ctrlKey || e.metaKey)
     ) {
       callback(e);
     }
